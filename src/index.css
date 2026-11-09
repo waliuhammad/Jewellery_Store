@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --c-ivory: #FBF8F3;
+  --c-cream: #F5EEE4;
+  --c-champagne: #E7D3B5;
+  --c-blush: #F1DDD6;
+  --c-rose: #C98C7A;
+  --c-gold: #B8924A;
+  --c-ink: #2B2522;
+  --c-taupe: #6E625A;
+  --c-noir: #1C1917;
+  --c-hairline: #E4D9CB;
+  --c-sage: #6F8F72;
+  --c-garnet: #A33B3B;
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+  --shadow-soft: 0 12px 40px rgba(43, 37, 34, 0.08);
+}
+
+::selection {
+  background: var(--c-blush);
+  color: var(--c-ink);
+}
+
+html {
+  background: var(--c-ivory);
+  color: var(--c-ink);
+  scroll-behavior: smooth;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Custom delicate luxury scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--c-ivory);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-hairline);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-gold);
+}
+
+/* Floating bottom-border input luxury pattern */
+.input-luxe {
+  background: transparent;
+  border-bottom: 1px solid var(--c-hairline);
+  color: var(--c-ink);
+  padding: 12px 0;
+  width: 100%;
+  transition: all 0.3s var(--ease-luxe);
+}
+.input-luxe:focus {
+  outline: none;
+  border-bottom-color: var(--c-gold);
+}
+
+/* Gold shimmer skeleton animation */
+@keyframes gold-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #F5EEE4 0%,
+    #E7D3B5 50%,
+    #F5EEE4 100%
+  );
+  background-size: 200% 100%;
+  animation: gold-shimmer 2.2s infinite ease-in-out;
+}
+
+/* Marquee infinite loop */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Focus styles for keyboard accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--c-gold);
+  outline-offset: 3px;
+}
+
+/* Reduced motion accessibility rule */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
