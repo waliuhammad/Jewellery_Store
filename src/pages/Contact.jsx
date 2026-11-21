@@ -17,35 +17,35 @@ export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSent(true);
-    showToast('Your message has been received by our studio team.', 'success');
+    showToast('Your inquiry has been received by our Lahore studio atelier.', 'success');
   };
 
   return (
     <div className="pt-24 lg:pt-32 pb-24 bg-ivory min-h-screen">
       <div className="max-w-page mx-auto px-6 lg:px-12">
         <div className="max-w-xl mb-12">
-          <span className="text-xs uppercase tracking-label text-taupe block mb-1">
+          <span className="text-[11px] uppercase tracking-label text-gold font-medium block mb-1">
             Studio Concierge
           </span>
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-ink font-normal">
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-forest font-normal">
             Say <span className="italic">hello</span>.
           </h1>
-          <p className="text-sm text-taupe mt-3 font-light leading-relaxed">
+          <p className="text-sm text-moss mt-3 font-light leading-relaxed">
             Have a question about ring sizing, custom bridal sets, or parcel dispatch? Our Lahore studio team responds within a few quiet hours.
           </p>
         </div>
 
-        {/* 2-Column Contact Layout */}
+        {/* 2-Column Contact Layout per Design.md Section 5.9 */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Left: Contact Form (7 cols) */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-10 border border-hairline shadow-soft">
             {isSent ? (
               <div className="py-12 text-center space-y-4">
-                <div className="w-12 h-12 rounded-full bg-sage/20 text-sage flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 rounded-full bg-leaf/15 text-leaf flex items-center justify-center mx-auto">
                   <Check className="w-6 h-6" />
                 </div>
-                <h3 className="font-display text-2xl text-ink">Message Received</h3>
-                <p className="text-xs text-taupe max-w-sm mx-auto leading-relaxed">
+                <h3 className="font-display text-2xl text-forest">Message Received</h3>
+                <p className="text-xs text-moss max-w-sm mx-auto leading-relaxed">
                   Thank you for reaching out, {formData.name}. Our jewelry concierge will reply to {formData.email} shortly.
                 </p>
                 <button
@@ -53,7 +53,7 @@ export default function Contact() {
                     setIsSent(false);
                     setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
                   }}
-                  className="text-xs uppercase tracking-label text-gold underline pt-2"
+                  className="text-xs uppercase tracking-label text-gold underline pt-2 hover:text-forest transition-colors"
                 >
                   Send another inquiry &rarr;
                 </button>
@@ -62,47 +62,47 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-6 text-xs">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-taupe uppercase tracking-label mb-1">Your Name *</label>
+                    <label className="block text-moss uppercase tracking-label mb-1">Your Name *</label>
                     <input
                       required
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="e.g. Fatima Raza"
-                      className="input-luxe"
+                      className="w-full bg-transparent border-b border-hairline py-2.5 text-forest focus:outline-none focus:border-forest transition-colors text-xs placeholder:text-moss/50"
                     />
                   </div>
                   <div>
-                    <label className="block text-taupe uppercase tracking-label mb-1">Email Address *</label>
+                    <label className="block text-moss uppercase tracking-label mb-1">Email Address *</label>
                     <input
                       required
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="fatima@example.com"
-                      className="input-luxe"
+                      className="w-full bg-transparent border-b border-hairline py-2.5 text-forest focus:outline-none focus:border-forest transition-colors text-xs placeholder:text-moss/50"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-taupe uppercase tracking-label mb-1">Mobile / WhatsApp</label>
+                    <label className="block text-moss uppercase tracking-label mb-1">Mobile / WhatsApp</label>
                     <input
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="0300 1234567"
-                      className="input-luxe"
+                      className="w-full bg-transparent border-b border-hairline py-2.5 text-forest focus:outline-none focus:border-forest transition-colors text-xs placeholder:text-moss/50"
                     />
                   </div>
                   <div>
-                    <label className="block text-taupe uppercase tracking-label mb-1">Inquiry Subject *</label>
+                    <label className="block text-moss uppercase tracking-label mb-1">Inquiry Subject *</label>
                     <select
                       required
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="input-luxe uppercase cursor-pointer"
+                      className="w-full bg-transparent border-b border-hairline py-2.5 text-forest focus:outline-none focus:border-forest transition-colors text-xs uppercase cursor-pointer"
                     >
                       <option value="">Select a topic</option>
                       <option value="order">Order Tracking &amp; Delivery</option>
@@ -115,44 +115,47 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label className="block text-taupe uppercase tracking-label mb-1">Your Message *</label>
+                  <label className="block text-moss uppercase tracking-label mb-1">Your Message *</label>
                   <textarea
                     required
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="How may our atelier assist you today?"
-                    className="input-luxe"
+                    className="w-full bg-transparent border-b border-hairline py-2.5 text-forest focus:outline-none focus:border-forest transition-colors text-xs placeholder:text-moss/50 resize-y"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full relative overflow-hidden bg-ink text-ivory py-4 uppercase tracking-label font-medium hover:bg-gold hover:text-ink transition-colors flex items-center justify-center gap-2"
+                  className="w-full relative overflow-hidden bg-forest text-ivory py-4 uppercase tracking-label font-medium transition-colors group flex items-center justify-center gap-2"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Send Dispatch</span>
+                  <span className="absolute inset-0 -translate-x-full bg-gold transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
+                  <span className="relative flex items-center justify-center gap-2 transition-colors duration-300 group-hover:text-ink">
+                    <Send className="w-4 h-4" />
+                    <span>Send Dispatch</span>
+                  </span>
                 </button>
               </form>
             )}
           </div>
 
-          {/* Right: Studio Details Panel (5 cols) */}
+          {/* Right: Studio Details Panel (5 cols) on Cream per Design.md Section 5.9 */}
           <div className="lg:col-span-5 bg-cream p-6 sm:p-8 border border-hairline space-y-8">
             <div>
               <span className="text-[11px] uppercase tracking-label text-gold font-medium block mb-1">
                 Direct Contact
               </span>
-              <h3 className="font-display text-2xl text-ink font-semibold">
+              <h3 className="font-display text-2xl text-forest font-semibold">
                 Studio Details
               </h3>
             </div>
 
-            <div className="space-y-5 text-xs text-taupe">
+            <div className="space-y-5 text-xs text-moss">
               <div className="flex items-start gap-3.5">
                 <MapPin className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                 <div>
-                  <span className="font-medium text-ink block">Atelier &amp; Office</span>
+                  <span className="font-medium text-forest block">Atelier &amp; Studio</span>
                   <span>{BRAND.contact.address}</span>
                 </div>
               </div>
@@ -160,8 +163,8 @@ export default function Contact() {
               <div className="flex items-start gap-3.5">
                 <Phone className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                 <div>
-                  <span className="font-medium text-ink block">Telephone</span>
-                  <a href={`tel:${BRAND.contact.phone.replace(/\s+/g, '')}`} className="hover:text-ink">
+                  <span className="font-medium text-forest block">Telephone</span>
+                  <a href={`tel:${BRAND.contact.phone.replace(/\s+/g, '')}`} className="hover:text-forest transition-colors">
                     {BRAND.contact.displayPhone}
                   </a>
                 </div>
@@ -170,8 +173,8 @@ export default function Contact() {
               <div className="flex items-start gap-3.5">
                 <Mail className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                 <div>
-                  <span className="font-medium text-ink block">Electronic Mail</span>
-                  <a href={`mailto:${BRAND.contact.email}`} className="hover:text-ink">
+                  <span className="font-medium text-forest block">Electronic Mail</span>
+                  <a href={`mailto:${BRAND.contact.email}`} className="hover:text-forest transition-colors">
                     {BRAND.contact.email}
                   </a>
                 </div>
@@ -180,28 +183,28 @@ export default function Contact() {
               <div className="flex items-start gap-3.5">
                 <Clock className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                 <div>
-                  <span className="font-medium text-ink block">Visiting Hours</span>
+                  <span className="font-medium text-forest block">Visiting Hours</span>
                   <span>{BRAND.contact.hours}</span>
                 </div>
               </div>
             </div>
 
-            {/* Instant WhatsApp Button */}
+            {/* WhatsApp Secondary Button with thin line icon */}
             <div className="pt-2">
               <a
                 href={`https://wa.me/${BRAND.contact.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full border border-ink py-3.5 text-xs uppercase tracking-label font-medium text-ink hover:bg-blush transition-colors flex items-center justify-center gap-2"
+                className="w-full border border-forest py-3.5 text-xs uppercase tracking-label font-medium text-forest hover:bg-forest hover:text-ivory transition-colors flex items-center justify-center gap-2 group"
               >
-                <MessageCircle className="w-4 h-4 text-sage" />
+                <MessageCircle className="w-4 h-4 text-leaf group-hover:text-ivory transition-colors" strokeWidth={1.5} />
                 <span>Chat on WhatsApp</span>
               </a>
             </div>
 
-            {/* Privacy-friendly Map Mock */}
+            {/* Studio Location Frame */}
             <div className="pt-4 border-t border-hairline">
-              <span className="text-[10px] uppercase tracking-label text-taupe block mb-2">
+              <span className="text-[10px] uppercase tracking-label text-moss block mb-2">
                 Lahore Studio Location
               </span>
               <div className="h-44 bg-hairline/60 border border-hairline relative flex items-center justify-center overflow-hidden">
@@ -210,10 +213,10 @@ export default function Contact() {
                   alt="Studio location map"
                   className="w-full h-full object-cover filter contrast-75 brightness-90 opacity-60"
                 />
-                <div className="absolute inset-0 bg-cream/40 flex flex-col items-center justify-center text-center p-4">
-                  <MapPin className="w-6 h-6 text-ink mb-1" />
-                  <span className="font-display text-sm font-semibold text-ink">M.M. Alam Road, Gulberg III</span>
-                  <span className="text-[10px] text-taupe">Appointments welcomed Mon–Sat</span>
+                <div className="absolute inset-0 bg-cream/50 flex flex-col items-center justify-center text-center p-4">
+                  <MapPin className="w-6 h-6 text-forest mb-1" />
+                  <span className="font-display text-sm font-semibold text-forest">M.M. Alam Road, Gulberg III</span>
+                  <span className="text-[10px] text-moss">Appointments welcomed Mon–Sat</span>
                 </div>
               </div>
             </div>
@@ -223,4 +226,3 @@ export default function Contact() {
     </div>
   );
 }
-

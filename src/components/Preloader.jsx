@@ -4,14 +4,14 @@ import { BRAND } from '../config/brand';
 
 export default function Preloader() {
   const [show, setShow] = useState(() => {
-    return !sessionStorage.getItem('aurelle_preloader_seen');
+    return !sessionStorage.getItem('minha_preloader_seen');
   });
 
   useEffect(() => {
     if (show) {
       const timer = setTimeout(() => {
         setShow(false);
-        sessionStorage.setItem('aurelle_preloader_seen', 'true');
+        sessionStorage.setItem('minha_preloader_seen', 'true');
       }, 1100);
       return () => clearTimeout(timer);
     }
@@ -26,21 +26,25 @@ export default function Preloader() {
           className="fixed inset-0 z-[9999] bg-ivory flex flex-col items-center justify-center pointer-events-none select-none"
         >
           <div className="text-center px-6">
-            <motion.h1
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-2xl sm:text-3xl tracking-wordmark uppercase text-ink font-semibold"
+              className="flex justify-center"
             >
-              {BRAND.name}
-            </motion.h1>
+              <img
+                src={BRAND.logo}
+                alt={BRAND.name}
+                className="h-[52px] sm:h-[60px] w-auto object-contain"
+              />
+            </motion.div>
 
-            {/* Drawing gold hairline */}
+            {/* Drawing gold hairline per Design.md Section 2.7 */}
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="h-[1px] bg-gold w-32 mx-auto mt-3 origin-left"
+              className="h-[1px] bg-gold w-36 mx-auto mt-4 origin-left"
             />
           </div>
         </motion.div>
@@ -48,4 +52,3 @@ export default function Preloader() {
     </AnimatePresence>
   );
 }
-

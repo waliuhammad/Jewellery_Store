@@ -1,16 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from './ToastContext';
+import { BRAND } from '../config/brand';
 
 const AuthContext = createContext(null);
 
-const AUTH_USER_KEY = 'aurelle_user_session';
-const ADDRESSES_KEY = 'aurelle_user_addresses';
-const ORDERS_KEY = 'aurelle_user_orders';
+const AUTH_USER_KEY = 'minha_user_session';
+const ADDRESSES_KEY = 'minha_user_addresses';
+const ORDERS_KEY = 'minha_user_orders';
 
 // Clean up any stale or legacy mock user data from browser storage
 try {
   localStorage.removeItem('aurelle_auth_user');
   localStorage.removeItem('aurelle_saved_addresses');
+  localStorage.removeItem('aurelle_user_session');
+  localStorage.removeItem('aurelle_user_addresses');
+  localStorage.removeItem('aurelle_user_orders');
 } catch (e) {
   // Ignore in non-browser environments
 }
@@ -18,7 +22,7 @@ try {
 // Seed demo orders for testing and tracking
 const INITIAL_ORDERS = [
   {
-    orderId: 'AJ-261108-1042',
+    orderId: 'MJ-261108-1042',
     date: '8 November 2026',
     status: 'shipped',
     paymentMethod: 'Cash on Delivery',
@@ -125,7 +129,7 @@ export function AuthProvider({ children }) {
       role: 'customer',
     };
     setUser(newUser);
-    showToast(`Welcome to Aurelle Jewels, ${newUser.name}.`, 'success');
+    showToast(`Welcome to ${BRAND.name}, ${newUser.name}.`, 'success');
     return true;
   };
 

@@ -2,23 +2,31 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Instagram, Facebook, ArrowRight, Check } from 'lucide-react';
 import { BRAND } from '../config/brand';
+import { api } from '../services/api';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
 
-  const handleNewsletterSubmit = (e) => {
+  const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
     if (email.trim()) {
+      try {
+        const res = await api.subscribeNewsletter(email.trim());
+        setCouponCode(res?.data?.couponCode || 'WELCOME10');
+      } catch {
+        setCouponCode('WELCOME10');
+      }
       setIsSubscribed(true);
       setEmail('');
     }
   };
 
   return (
-    <footer className="bg-noir text-ivory pt-20 lg:pt-24 pb-12 border-t border-hairline/20 relative">
+    <footer className="bg-deep text-ivory pt-20 lg:pt-24 pb-12 border-t border-hairline/20 relative">
       <div className="max-w-page mx-auto px-6 lg:px-12">
-        {/* Newsletter Subscription Row */}
+        {/* Newsletter Subscription Row (Design.md Section 4.2) */}
         <div className="pb-16 mb-16 border-b border-champagne/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div className="max-w-md">
             <span className="text-[11px] uppercase tracking-label text-champagne block mb-1">
@@ -35,8 +43,8 @@ export default function Footer() {
           <div className="w-full md:w-auto md:min-w-[380px]">
             {isSubscribed ? (
               <div className="flex items-center gap-2.5 text-champagne bg-champagne/10 border border-champagne/20 px-5 py-3 text-sm">
-                <Check className="w-4 h-4 text-champagne" />
-                <span>Thank you. You have been added to our private dispatch.</span>
+                <Check className="w-4 h-4 text-champagne flex-shrink-0" />
+                <span>Welcome to {BRAND.name}. Use voucher <strong>{couponCode}</strong> for 10% off.</span>
               </div>
             ) : (
               <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2 w-full">
@@ -60,13 +68,17 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Four Column Grid */}
+        {/* Four Column Grid per Design.md Section 4.2: grid-cols-[1.4fr_1fr_1fr_1.4fr] */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.4fr] gap-12 lg:gap-8 pb-16">
           {/* Col 1: Brand */}
           <div className="space-y-4">
-            <h2 className="font-display text-2xl uppercase tracking-wordmark font-semibold text-ivory">
-              {BRAND.name}
-            </h2>
+            <Link to="/" className="inline-block" aria-label={BRAND.name}>
+              <img
+                src={BRAND.logoWhite}
+                alt={BRAND.name}
+                className="h-[72px] w-auto object-contain"
+              />
+            </Link>
             <p className="text-sm text-ivory/75 max-w-xs leading-relaxed font-sans">
               Handcrafted fine and fashion jewelry reflecting the wearer's own story. Sunlit warmth, tactile luster, and thoughtful details.
             </p>
@@ -95,43 +107,31 @@ export default function Footer() {
           {/* Col 2: Quick Links */}
           <div>
             <h4 className="font-display text-lg text-ivory mb-5 font-semibold">
-              Explore
+              Quick Links
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link
-                  to="/"
-                  className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block"
-                >
+                <Link to="/" className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block">
                   Home
-                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-[1px] bg-gold" />
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/shop"
-                  className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block"
-                >
-                  Shop All Pieces
-                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-[1px] bg-gold" />
+                <Link to="/shop" className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block">
+                  Shop Collection
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/about"
-                  className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block"
-                >
-                  Our Story &amp; Craft
-                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-[1px] bg-gold" />
+                <Link to="/about" className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block">
+                  About Us
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/contact"
-                  className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block"
-                >
-                  Contact &amp; Studio
-                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-[1px] bg-gold" />
+                <Link to="/contact" className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block">
+                  Contact Concierge
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
             </ul>
@@ -140,43 +140,31 @@ export default function Footer() {
           {/* Col 3: Support */}
           <div>
             <h4 className="font-display text-lg text-ivory mb-5 font-semibold">
-              Client Care
+              Support
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link
-                  to="/faqs"
-                  className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block"
-                >
-                  FAQs &amp; Help
-                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-[1px] bg-gold" />
+                <Link to="/track-order" className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block">
+                  Track Order
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/track-order"
-                  className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block"
-                >
-                  Track Your Order
-                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-[1px] bg-gold" />
+                <Link to="/faqs" className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block">
+                  FAQs &amp; Shipping
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/privacy-policy"
-                  className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block"
-                >
+                <Link to="/privacy" className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block">
                   Privacy Policy
-                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-[1px] bg-gold" />
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/terms"
-                  className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block"
-                >
-                  Terms &amp; 7-Day Returns
-                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-[1px] bg-gold" />
+                <Link to="/terms" className="text-ivory/75 hover:text-ivory transition-colors relative group inline-block">
+                  Terms of Service
+                  <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               </li>
             </ul>
@@ -185,28 +173,22 @@ export default function Footer() {
           {/* Col 4: Contact Info */}
           <div>
             <h4 className="font-display text-lg text-ivory mb-5 font-semibold">
-              Studio &amp; Inquiries
+              Contact Info
             </h4>
-            <ul className="space-y-4 text-sm text-ivory/80">
+            <ul className="space-y-3 text-sm text-ivory/75">
               <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-champagne mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                <MapPin className="w-4 h-4 text-champagne flex-shrink-0 mt-0.5" strokeWidth={1.4} />
                 <span>{BRAND.contact.address}</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-champagne flex-shrink-0" strokeWidth={1.5} />
-                <a
-                  href={`tel:${BRAND.contact.phone.replace(/\s+/g, '')}`}
-                  className="hover:text-champagne transition-colors"
-                >
+                <Phone className="w-4 h-4 text-champagne flex-shrink-0" strokeWidth={1.4} />
+                <a href={`tel:${BRAND.contact.phone}`} className="hover:text-champagne transition-colors">
                   {BRAND.contact.displayPhone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-champagne flex-shrink-0" strokeWidth={1.5} />
-                <a
-                  href={`mailto:${BRAND.contact.email}`}
-                  className="hover:text-champagne transition-colors"
-                >
+                <Mail className="w-4 h-4 text-champagne flex-shrink-0" strokeWidth={1.4} />
+                <a href={`mailto:${BRAND.contact.email}`} className="hover:text-champagne transition-colors">
                   {BRAND.contact.email}
                 </a>
               </li>
@@ -214,23 +196,12 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-champagne/15 flex flex-col sm:flex-row items-center justify-between text-xs text-ivory/60 gap-4">
-          <p className="text-center sm:text-left">
-            &copy; 2026 {BRAND.name}. All rights reserved.
-          </p>
-          <div className="flex items-center gap-6">
-            <Link to="/privacy-policy" className="hover:text-ivory transition-colors">
-              Privacy
-            </Link>
-            <span>&bull;</span>
-            <Link to="/terms" className="hover:text-ivory transition-colors">
-              Terms &amp; Returns
-            </Link>
-          </div>
+        {/* Bottom Bar per Design.md Section 4.2 */}
+        <div className="pt-8 border-t border-[rgba(234,220,180,0.18)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ivory/60 font-sans">
+          <p>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
+          <p className="tracking-wide">Complimentary Delivery Across Pakistan on Orders Over PKR {BRAND.shipping.freeThreshold.toLocaleString()}</p>
         </div>
       </div>
     </footer>
   );
 }
-

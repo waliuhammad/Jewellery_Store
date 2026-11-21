@@ -10,10 +10,11 @@ export default function Shop() {
   const { category } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
+  const categoryParam = searchParams.get('category');
 
   // Filter States
-  const [selectedCategory, setSelectedCategory] = useState(category || 'all');
-  const [priceMax, setPriceMax] = useState(22000);
+  const [selectedCategory, setSelectedCategory] = useState(category || categoryParam || 'all');
+  const [priceMax, setPriceMax] = useState(75000);
   const [selectedFinishes, setSelectedFinishes] = useState([]);
   const [selectedOccasion, setSelectedOccasion] = useState('all');
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -23,12 +24,15 @@ export default function Shop() {
 
   // Sync route category parameter
   useEffect(() => {
+    const qCat = searchParams.get('category');
     if (category) {
       setSelectedCategory(category);
+    } else if (qCat) {
+      setSelectedCategory(qCat);
     } else {
       setSelectedCategory('all');
     }
-  }, [category]);
+  }, [category, searchParams]);
 
   const finishOptions = ['18k Warm Gold', 'Rose Gold', 'Pure Silver', 'Pearl', 'Kundan', 'Emerald'];
 
@@ -40,11 +44,11 @@ export default function Shop() {
 
   const clearAllFilters = () => {
     setSelectedCategory('all');
-    setPriceMax(22000);
+    setPriceMax(75000);
     setSelectedFinishes([]);
     setSelectedOccasion('all');
     setInStockOnly(false);
-    if (searchQuery) {
+    if (searchQuery || searchParams.get('category')) {
       setSearchParams({});
     }
   };
@@ -70,8 +74,14 @@ export default function Shop() {
       }
 
       // Category
-      if (selectedCategory !== 'all' && product.category !== selectedCategory) {
-        return false;
+      if (selectedCategory !== 'all') {
+        const pCat = (product.category || '').toLowerCase();
+        const selCat = selectedCategory.toLowerCase();
+        if (selCat === 'sets' || selCat === 'bridal-sets') {
+          if (pCat !== 'sets' && pCat !== 'bridal-sets') return false;
+        } else if (pCat !== selCat) {
+          return false;
+        }
       }
 
       // Price
@@ -121,26 +131,26 @@ export default function Shop() {
   return (
     <div className="pt-24 lg:pt-32 pb-24 bg-ivory min-h-screen">
       <div className="max-w-page mx-auto px-6 lg:px-12">
-        {/* Breadcrumb */}
-        <nav className="text-xs uppercase tracking-label text-taupe mb-4 flex items-center gap-2">
-          <Link to="/" className="hover:text-ink">Home</Link>
+        {/* Breadcrumb per Design.md Section 4.7 */}
+        <nav className="text-xs uppercase tracking-label text-moss mb-4 flex items-center gap-2">
+          <Link to="/" className="hover:text-forest transition-colors">Home</Link>
           <span>/</span>
-          <Link to="/shop" className="hover:text-ink">Shop</Link>
+          <Link to="/shop" className="hover:text-forest transition-colors">Shop</Link>
           {selectedCategory !== 'all' && (
             <>
               <span>/</span>
-              <span className="text-ink font-medium">{categoryTitle}</span>
+              <span className="text-forest font-medium">{categoryTitle}</span>
             </>
           )}
         </nav>
 
-        {/* Header: Title + Controls */}
+        {/* Header: Title + Result count + Sort per Design.md Section 5.2 */}
         <div className="flex flex-col md:flex-row md:items-end justify-between pb-8 border-b border-hairline gap-6">
           <div>
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-ink font-normal">
+            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-forest font-normal">
               {categoryTitle}
             </h1>
-            <p className="text-xs uppercase tracking-label text-taupe mt-2">
+            <p className="text-xs uppercase tracking-label text-moss mt-2">
               Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'piece' : 'pieces'}
               {searchQuery && ` for "${searchQuery}"`}
             </p>
@@ -150,20 +160,20 @@ export default function Shop() {
             {/* Mobile Filter Button */}
             <button
               onClick={() => setIsMobileFilterOpen(true)}
-              className="lg:hidden flex items-center gap-2 text-xs uppercase tracking-label border border-hairline px-4 py-2.5 bg-ivory text-ink"
+              className="lg:hidden flex items-center gap-2 text-xs uppercase tracking-label border border-hairline px-4 py-2.5 bg-ivory text-ink hover:border-forest transition-colors"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>Filters {activeFilterCount > 0 && `(${activeFilterCount})`}</span>
             </button>
 
             {/* Sort Dropdown */}
-            <div className="flex items-center gap-2 text-xs uppercase tracking-label text-taupe">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-label text-moss">
               <span>Sort:</span>
               <div className="relative">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="bg-transparent text-ink font-medium py-1.5 pl-2 pr-7 border-b border-hairline focus:outline-none focus:border-gold cursor-pointer uppercase text-xs"
+                  className="bg-transparent text-forest font-medium py-1.5 pl-2 pr-7 border-b border-hairline focus:outline-none focus:border-gold cursor-pointer uppercase text-xs"
                 >
                   <option value="featured">Featured Curation</option>
                   <option value="newest">Newest Arrivals</option>
@@ -171,7 +181,7 @@ export default function Shop() {
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                 </select>
-                <ChevronDown className="w-3.5 h-3.5 absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-taupe" />
+                <ChevronDown className="w-3.5 h-3.5 absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-moss" />
               </div>
             </div>
           </div>
@@ -180,53 +190,65 @@ export default function Shop() {
         {/* Active Filter Chips */}
         {activeFilterCount > 0 && (
           <div className="py-4 flex flex-wrap items-center gap-2 border-b border-hairline text-xs">
-            <span className="text-taupe uppercase tracking-label text-[11px] mr-1">Active:</span>
+            <span className="text-moss uppercase tracking-label text-[11px] mr-1">Active:</span>
 
             {selectedCategory !== 'all' && (
               <span className="inline-flex items-center gap-1.5 bg-cream border border-hairline px-3 py-1 text-ink">
                 Category: {categoryTitle}
-                <button onClick={() => setSelectedCategory('all')}><X className="w-3 h-3 text-taupe hover:text-ink" /></button>
+                <button onClick={() => setSelectedCategory('all')} aria-label="Remove category filter">
+                  <X className="w-3 h-3 text-moss hover:text-maroon transition-colors" />
+                </button>
               </span>
             )}
 
             {searchQuery && (
               <span className="inline-flex items-center gap-1.5 bg-cream border border-hairline px-3 py-1 text-ink">
                 Search: "{searchQuery}"
-                <button onClick={() => setSearchParams({})}><X className="w-3 h-3 text-taupe hover:text-ink" /></button>
+                <button onClick={() => setSearchParams({})} aria-label="Clear search">
+                  <X className="w-3 h-3 text-moss hover:text-maroon transition-colors" />
+                </button>
               </span>
             )}
 
-            {priceMax < 22000 && (
+            {priceMax < 75000 && (
               <span className="inline-flex items-center gap-1.5 bg-cream border border-hairline px-3 py-1 text-ink">
                 Under {BRAND.currency.format(priceMax)}
-                <button onClick={() => setPriceMax(22000)}><X className="w-3 h-3 text-taupe hover:text-ink" /></button>
+                <button onClick={() => setPriceMax(75000)} aria-label="Reset price filter">
+                  <X className="w-3 h-3 text-moss hover:text-maroon transition-colors" />
+                </button>
               </span>
             )}
 
             {selectedFinishes.map((f) => (
               <span key={f} className="inline-flex items-center gap-1.5 bg-cream border border-hairline px-3 py-1 text-ink">
                 {f}
-                <button onClick={() => toggleFinish(f)}><X className="w-3 h-3 text-taupe hover:text-ink" /></button>
+                <button onClick={() => toggleFinish(f)} aria-label={`Remove finish ${f}`}>
+                  <X className="w-3 h-3 text-moss hover:text-maroon transition-colors" />
+                </button>
               </span>
             ))}
 
             {selectedOccasion !== 'all' && (
               <span className="inline-flex items-center gap-1.5 bg-cream border border-hairline px-3 py-1 text-ink">
                 {OCCASIONS.find((o) => o.id === selectedOccasion)?.name}
-                <button onClick={() => setSelectedOccasion('all')}><X className="w-3 h-3 text-taupe hover:text-ink" /></button>
+                <button onClick={() => setSelectedOccasion('all')} aria-label="Remove occasion filter">
+                  <X className="w-3 h-3 text-moss hover:text-maroon transition-colors" />
+                </button>
               </span>
             )}
 
             {inStockOnly && (
               <span className="inline-flex items-center gap-1.5 bg-cream border border-hairline px-3 py-1 text-ink">
                 In Stock Only
-                <button onClick={() => setInStockOnly(false)}><X className="w-3 h-3 text-taupe hover:text-ink" /></button>
+                <button onClick={() => setInStockOnly(false)} aria-label="Remove stock filter">
+                  <X className="w-3 h-3 text-moss hover:text-maroon transition-colors" />
+                </button>
               </span>
             )}
 
             <button
               onClick={clearAllFilters}
-              className="text-gold underline underline-offset-4 uppercase tracking-label text-[11px] ml-2"
+              className="text-maroon underline underline-offset-4 uppercase tracking-label text-[11px] ml-2 hover:opacity-80 transition-opacity"
             >
               Clear all
             </button>
@@ -235,20 +257,19 @@ export default function Shop() {
 
         {/* Main Content Layout: Sidebar + Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-10">
-          {/* Desktop Filter Sidebar (260px sticky) */}
+          {/* Desktop Filter Sidebar (260px sticky per Design.md Section 5.2) */}
           <aside className="hidden lg:block lg:col-span-3 space-y-8 sticky top-28 self-start pr-4">
             {/* Category Filter */}
             <div>
-              <h3 className="text-xs uppercase tracking-label font-medium text-ink mb-3 pb-2 border-b border-hairline">
+              <h3 className="text-xs uppercase tracking-label font-medium text-forest mb-3 pb-2 border-b border-hairline">
                 Categories
               </h3>
               <ul className="space-y-2 text-xs">
                 <li>
                   <button
                     onClick={() => setSelectedCategory('all')}
-                    className={`w-full text-left py-1 transition-colors flex justify-between ${
-                      selectedCategory === 'all' ? 'text-gold font-medium' : 'text-taupe hover:text-ink'
-                    }`}
+                    className={`w-full text-left py-1 transition-colors flex justify-between ${selectedCategory === 'all' ? 'text-forest font-semibold' : 'text-moss hover:text-forest'
+                      }`}
                   >
                     <span>All Jewelry</span>
                     <span>({PRODUCTS.length})</span>
@@ -258,9 +279,8 @@ export default function Shop() {
                   <li key={cat.id}>
                     <button
                       onClick={() => setSelectedCategory(cat.slug)}
-                      className={`w-full text-left py-1 transition-colors flex justify-between ${
-                        selectedCategory === cat.slug ? 'text-gold font-medium' : 'text-taupe hover:text-ink'
-                      }`}
+                      className={`w-full text-left py-1 transition-colors flex justify-between ${selectedCategory === cat.slug ? 'text-forest font-semibold' : 'text-moss hover:text-forest'
+                        }`}
                     >
                       <span>{cat.name}</span>
                       <span>({cat.count})</span>
@@ -273,31 +293,31 @@ export default function Shop() {
             {/* Price Range Slider */}
             <div>
               <div className="flex justify-between items-center mb-3 pb-2 border-b border-hairline">
-                <h3 className="text-xs uppercase tracking-label font-medium text-ink">
+                <h3 className="text-xs uppercase tracking-label font-medium text-forest">
                   Price Ceiling
                 </h3>
-                <span className="text-xs text-ink font-medium">
+                <span className="text-xs text-forest font-medium">
                   {BRAND.currency.format(priceMax)}
                 </span>
               </div>
               <input
                 type="range"
-                min="2000"
-                max="22000"
+                min="500"
+                max="75000"
                 step="500"
                 value={priceMax}
                 onChange={(e) => setPriceMax(Number(e.target.value))}
-                className="w-full accent-gold cursor-pointer"
+                className="w-full accent-forest cursor-pointer"
               />
-              <div className="flex justify-between text-[11px] text-taupe mt-1">
-                <span>PKR 2,000</span>
-                <span>PKR 22,000</span>
+              <div className="flex justify-between text-[11px] text-moss mt-1 font-sans">
+                <span>PKR 500</span>
+                <span>PKR 75,000</span>
               </div>
             </div>
 
             {/* Material & Finish Checkboxes */}
             <div>
-              <h3 className="text-xs uppercase tracking-label font-medium text-ink mb-3 pb-2 border-b border-hairline">
+              <h3 className="text-xs uppercase tracking-label font-medium text-forest mb-3 pb-2 border-b border-hairline">
                 Material &amp; Finish
               </h3>
               <div className="space-y-2">
@@ -306,13 +326,13 @@ export default function Shop() {
                   return (
                     <label
                       key={finish}
-                      className="flex items-center gap-2.5 text-xs text-taupe hover:text-ink cursor-pointer select-none"
+                      className="flex items-center gap-2.5 text-xs text-moss hover:text-forest cursor-pointer select-none transition-colors"
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => toggleFinish(finish)}
-                        className="w-3.5 h-3.5 accent-gold rounded-none"
+                        className="w-3.5 h-3.5 accent-forest rounded-none"
                       />
                       <span>{finish}</span>
                     </label>
@@ -323,16 +343,15 @@ export default function Shop() {
 
             {/* Occasion Filter */}
             <div>
-              <h3 className="text-xs uppercase tracking-label font-medium text-ink mb-3 pb-2 border-b border-hairline">
+              <h3 className="text-xs uppercase tracking-label font-medium text-forest mb-3 pb-2 border-b border-hairline">
                 Occasion
               </h3>
               <ul className="space-y-1.5 text-xs">
                 <li>
                   <button
                     onClick={() => setSelectedOccasion('all')}
-                    className={`w-full text-left py-1 transition-colors ${
-                      selectedOccasion === 'all' ? 'text-gold font-medium' : 'text-taupe hover:text-ink'
-                    }`}
+                    className={`w-full text-left py-1 transition-colors ${selectedOccasion === 'all' ? 'text-forest font-semibold' : 'text-moss hover:text-forest'
+                      }`}
                   >
                     All Occasions
                   </button>
@@ -341,9 +360,8 @@ export default function Shop() {
                   <li key={occ.id}>
                     <button
                       onClick={() => setSelectedOccasion(occ.id)}
-                      className={`w-full text-left py-1 transition-colors ${
-                        selectedOccasion === occ.id ? 'text-gold font-medium' : 'text-taupe hover:text-ink'
-                      }`}
+                      className={`w-full text-left py-1 transition-colors ${selectedOccasion === occ.id ? 'text-forest font-semibold' : 'text-moss hover:text-forest'
+                        }`}
                     >
                       {occ.name}
                     </button>
@@ -354,12 +372,12 @@ export default function Shop() {
 
             {/* Stock Availability */}
             <div className="pt-2">
-              <label className="flex items-center gap-2.5 text-xs text-ink cursor-pointer select-none">
+              <label className="flex items-center gap-2.5 text-xs text-moss hover:text-forest cursor-pointer select-none transition-colors">
                 <input
                   type="checkbox"
                   checked={inStockOnly}
                   onChange={(e) => setInStockOnly(e.target.checked)}
-                  className="w-3.5 h-3.5 accent-gold rounded-none"
+                  className="w-3.5 h-3.5 accent-forest rounded-none"
                 />
                 <span>Ready to dispatch (in stock only)</span>
               </label>
@@ -370,18 +388,18 @@ export default function Shop() {
           <main className="lg:col-span-9">
             {displayedProducts.length === 0 ? (
               <div className="py-24 text-center border border-dashed border-hairline p-12 bg-cream/40">
-                <p className="font-display text-2xl md:text-3xl text-ink mb-3">
+                <p className="font-display text-2xl md:text-3xl text-forest mb-3">
                   No pieces match your selected filters
                 </p>
-                <p className="text-sm text-taupe max-w-md mx-auto mb-8 font-light">
+                <p className="text-sm text-moss max-w-md mx-auto mb-8 font-light">
                   Try widening your price range, clearing specific material preferences, or browsing all categories.
                 </p>
                 <button
                   onClick={clearAllFilters}
-                  className="relative overflow-hidden bg-ink text-ivory px-8 py-3.5 text-xs uppercase tracking-label group"
+                  className="relative overflow-hidden bg-forest text-ivory px-8 py-3.5 text-xs uppercase tracking-label font-medium group"
                 >
                   <span className="absolute inset-0 -translate-x-full bg-gold transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
-                  <span className="relative transition-colors duration-300 group-hover:text-ink">
+                  <span className="relative z-10 transition-colors duration-300 group-hover:text-ink">
                     Reset All Filters
                   </span>
                 </button>
@@ -393,7 +411,7 @@ export default function Shop() {
                   className="grid grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8"
                 >
                   {displayedProducts.map((product, index) => {
-                    // Editorial Interruption Tile after 4th product
+                    // Editorial Interruption Tile after 4th product per Design.md 5.2
                     if (index === 4) {
                       return (
                         <React.Fragment key="editorial-break">
@@ -402,16 +420,16 @@ export default function Shop() {
                               <span className="text-[10px] uppercase tracking-label text-gold font-medium block mb-1">
                                 Atelier Note
                               </span>
-                              <h3 className="font-display text-2xl sm:text-3xl text-ink leading-snug">
+                              <h3 className="font-display text-2xl sm:text-3xl text-forest leading-snug">
                                 Designed to be layered, mixed, and worn <span className="italic">every day</span>.
                               </h3>
-                              <p className="text-xs text-taupe mt-2 font-light">
+                              <p className="text-xs text-moss mt-2 font-light">
                                 All our pieces are engineered with uniform warm-gold and sterling undertones so any two items pair seamlessly together.
                               </p>
                             </div>
                             <Link
                               to="/about"
-                              className="text-xs uppercase tracking-label font-medium text-ink hover:text-gold underline underline-offset-4 flex-shrink-0"
+                              className="text-xs uppercase tracking-label font-medium text-forest hover:text-maroon underline underline-offset-4 flex-shrink-0 transition-colors"
                             >
                               Read About Our Materials &rarr;
                             </Link>
@@ -429,9 +447,12 @@ export default function Shop() {
                   <div className="mt-16 text-center">
                     <button
                       onClick={() => setVisibleCount((prev) => prev + 4)}
-                      className="relative overflow-hidden bg-transparent border border-ink text-ink px-10 py-4 text-xs uppercase tracking-label font-medium hover:bg-blush transition-colors"
+                      className="relative overflow-hidden bg-transparent border border-forest text-forest px-10 py-4 text-xs uppercase tracking-label font-medium group hover:text-ink transition-colors"
                     >
-                      Load More Pieces ({filteredProducts.length - visibleCount} remaining)
+                      <span className="absolute inset-0 -translate-x-full bg-mist transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
+                      <span className="relative z-10">
+                        Load More Pieces ({filteredProducts.length - visibleCount} remaining)
+                      </span>
                     </button>
                   </div>
                 )}
@@ -441,7 +462,7 @@ export default function Shop() {
         </div>
       </div>
 
-      {/* Mobile Filter Bottom Sheet */}
+      {/* Mobile Filter Bottom Sheet per Design.md Section 5.2 (slides up, 85% height) */}
       <AnimatePresence>
         {isMobileFilterOpen && (
           <div className="fixed inset-0 z-50 lg:hidden overflow-hidden">
@@ -450,7 +471,7 @@ export default function Shop() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileFilterOpen(false)}
-              className="absolute inset-0 bg-noir/50 backdrop-blur-sm"
+              className="absolute inset-0 bg-deep/50 backdrop-blur-sm"
             />
             <motion.div
               initial={{ y: '100%' }}
@@ -460,26 +481,26 @@ export default function Shop() {
               className="absolute inset-x-0 bottom-0 max-h-[85vh] bg-ivory border-t border-hairline shadow-soft flex flex-col z-10 p-6 overflow-y-auto"
             >
               <div className="flex items-center justify-between pb-4 border-b border-hairline mb-6">
-                <h3 className="font-display text-2xl text-ink">Filter Pieces</h3>
+                <h3 className="font-display text-2xl text-forest">Filter Pieces</h3>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="p-2 text-taupe hover:text-ink"
+                  className="p-2 text-moss hover:text-ink"
+                  aria-label="Close filters"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Mobile Filter Options */}
-              <div className="space-y-6 pb-20">
+              <div className="space-y-6 pb-24">
                 {/* Categories */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-label font-medium text-ink mb-3">Category</h4>
+                  <h4 className="text-xs uppercase tracking-label font-medium text-forest mb-3">Category</h4>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setSelectedCategory('all')}
-                      className={`px-3 py-1.5 text-xs uppercase tracking-label border ${
-                        selectedCategory === 'all' ? 'bg-ink text-ivory border-ink' : 'border-hairline text-ink'
-                      }`}
+                      className={`px-3 py-1.5 text-xs uppercase tracking-label border transition-colors ${selectedCategory === 'all' ? 'bg-forest text-ivory border-forest' : 'border-hairline text-ink'
+                        }`}
                     >
                       All
                     </button>
@@ -487,9 +508,8 @@ export default function Shop() {
                       <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.slug)}
-                        className={`px-3 py-1.5 text-xs uppercase tracking-label border ${
-                          selectedCategory === cat.slug ? 'bg-ink text-ivory border-ink' : 'border-hairline text-ink'
-                        }`}
+                        className={`px-3 py-1.5 text-xs uppercase tracking-label border transition-colors ${selectedCategory === cat.slug ? 'bg-forest text-ivory border-forest' : 'border-hairline text-ink'
+                          }`}
                       >
                         {cat.name}
                       </button>
@@ -500,31 +520,30 @@ export default function Shop() {
                 {/* Price */}
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <h4 className="text-xs uppercase tracking-label font-medium text-ink">Max Price</h4>
-                    <span className="text-xs font-medium text-ink">{BRAND.currency.format(priceMax)}</span>
+                    <h4 className="text-xs uppercase tracking-label font-medium text-forest">Max Price</h4>
+                    <span className="text-xs font-medium text-forest">{BRAND.currency.format(priceMax)}</span>
                   </div>
                   <input
                     type="range"
-                    min="2000"
-                    max="22000"
+                    min="500"
+                    max="75000"
                     step="500"
                     value={priceMax}
                     onChange={(e) => setPriceMax(Number(e.target.value))}
-                    className="w-full accent-gold"
+                    className="w-full accent-forest"
                   />
                 </div>
 
                 {/* Materials */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-label font-medium text-ink mb-3">Materials</h4>
+                  <h4 className="text-xs uppercase tracking-label font-medium text-forest mb-3">Materials</h4>
                   <div className="flex flex-wrap gap-2">
                     {finishOptions.map((f) => (
                       <button
                         key={f}
                         onClick={() => toggleFinish(f)}
-                        className={`px-3 py-1.5 text-xs border ${
-                          selectedFinishes.includes(f) ? 'bg-ink text-ivory border-ink' : 'border-hairline text-ink'
-                        }`}
+                        className={`px-3 py-1.5 text-xs border transition-colors ${selectedFinishes.includes(f) ? 'bg-forest text-ivory border-forest' : 'border-hairline text-ink'
+                          }`}
                       >
                         {f}
                       </button>
@@ -537,13 +556,13 @@ export default function Shop() {
               <div className="fixed bottom-0 inset-x-0 p-4 bg-ivory border-t border-hairline flex gap-3">
                 <button
                   onClick={clearAllFilters}
-                  className="flex-1 py-3 text-xs uppercase tracking-label border border-hairline text-ink"
+                  className="flex-1 py-3 text-xs uppercase tracking-label border border-hairline text-moss hover:text-maroon transition-colors"
                 >
                   Clear All
                 </button>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="flex-1 py-3 text-xs uppercase tracking-label bg-ink text-ivory font-medium"
+                  className="flex-1 py-3 text-xs uppercase tracking-label bg-forest text-ivory font-medium hover:bg-emerald transition-colors"
                 >
                   Show Results ({filteredProducts.length})
                 </button>
@@ -555,4 +574,3 @@ export default function Shop() {
     </div>
   );
 }
-

@@ -16,8 +16,6 @@ export default function CartDrawer() {
     updateQuantity,
     removeFromCart,
     subtotal,
-    freeShippingRemaining,
-    freeShippingProgress,
     isGiftWrap,
     setIsGiftWrap,
     orderNote,
@@ -57,17 +55,17 @@ export default function CartDrawer() {
     <AnimatePresence>
       {isDrawerOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden">
-          {/* Backdrop */}
+          {/* Backdrop (Deep Forest 45% per Design.md Section 4.6) */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={closeCart}
-            className="absolute inset-0 bg-noir/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-deep/45 backdrop-blur-sm"
           />
 
-          {/* Drawer Panel */}
+          {/* Drawer Panel (440px on desktop, full width on mobile) */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -77,15 +75,15 @@ export default function CartDrawer() {
           >
             {/* Header */}
             <div className="px-6 py-5 border-b border-hairline flex items-center justify-between">
-              <h2 className="font-display text-2xl md:text-3xl text-ink">
-                Your Bag <span className="text-taupe font-sans text-base">({totalItemCount})</span>
+              <h2 className="font-display text-2xl md:text-3xl text-forest">
+                Your Bag <span className="text-moss font-sans text-sm">({totalItemCount})</span>
               </h2>
               <button
                 onClick={closeCart}
-                className="p-2 -mr-2 text-taupe hover:text-ink transition-colors"
+                className="p-2 -mr-2 text-moss hover:text-ink transition-colors"
                 aria-label="Close bag drawer"
               >
-                <X className="w-5 h-5" strokeWidth={1.5} />
+                <X className="w-5 h-5" strokeWidth={1.4} />
               </button>
             </div>
 
@@ -93,90 +91,87 @@ export default function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-6 py-4 divide-y divide-hairline">
               {items.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-16">
-                  <div className="w-16 h-16 rounded-full border border-hairline flex items-center justify-center mb-4 text-taupe">
-                    <X className="w-6 h-6 stroke-1" />
+                  <div className="w-16 h-16 rounded-full border border-hairline flex items-center justify-center mb-4 text-moss">
+                    <X className="w-6 h-6 stroke-[1.2]" />
                   </div>
-                  <h3 className="font-display text-2xl text-ink mb-2">Your bag is empty</h3>
-                  <p className="text-sm text-taupe mb-8 max-w-xs">
-                    Nothing saved yet. Explore our handcrafted pieces to begin your curation.
+                  <h3 className="font-display text-2xl text-forest mb-2">Your bag is empty</h3>
+                  <p className="text-sm text-moss mb-8 max-w-xs">
+                    Your bag is empty. Let's fix that. Explore our curated fine and fashion jewelry archives.
                   </p>
                   <button
                     onClick={() => {
                       closeCart();
                       navigate('/shop');
                     }}
-                    className="relative overflow-hidden bg-ink text-ivory px-8 py-3.5 text-xs uppercase tracking-label group"
+                    className="relative overflow-hidden bg-forest text-ivory px-8 py-3.5 text-xs uppercase tracking-label font-medium group"
                   >
                     <span className="absolute inset-0 -translate-x-full bg-gold transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
-                    <span className="relative transition-colors duration-300 group-hover:text-ink">
-                      Explore Collection
+                    <span className="relative z-10 transition-colors duration-300 group-hover:text-ink">
+                      Continue Shopping
                     </span>
                   </button>
                 </div>
               ) : (
                 items.map((item) => (
-                  <div key={item.cartItemId} className="py-4 flex gap-4 items-start">
-                    {/* Thumbnail */}
-                    <Link
-                      to={`/product/${item.product.slug}`}
-                      onClick={closeCart}
-                      className="w-20 h-24 flex-shrink-0 bg-cream overflow-hidden border border-hairline"
-                    >
+                  <div key={`${item.id}-${item.finish}-${item.size}`} className="py-4 flex gap-4">
+                    {/* 80x100px thumbnail */}
+                    <div className="w-20 h-24 bg-cream flex-shrink-0 overflow-hidden border border-hairline">
                       <img
-                        src={item.product.images[0]}
-                        alt={item.product.name}
+                        src={item.image}
+                        alt={item.name}
                         className="w-full h-full object-cover"
                       />
-                    </Link>
+                    </div>
 
-                    {/* Details */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start gap-2">
-                        <Link
-                          to={`/product/${item.product.slug}`}
-                          onClick={closeCart}
-                          className="font-display text-lg text-ink hover:text-gold transition-colors leading-snug line-clamp-1"
-                        >
-                          {item.product.name}
-                        </Link>
-                        <button
-                          onClick={() => removeFromCart(item.cartItemId)}
-                          className="text-taupe hover:text-garnet transition-colors p-1"
-                          aria-label={`Remove ${item.product.name} from bag`}
-                        >
-                          <Trash2 className="w-4 h-4" strokeWidth={1.3} />
-                        </button>
-                      </div>
-
-                      <p className="text-xs text-taupe mt-0.5">
-                        {item.finish} &bull; {item.size}
-                      </p>
-
-                      <div className="mt-3 flex items-center justify-between">
-                        {/* Quantity Stepper */}
-                        <div className="inline-flex items-center border border-hairline bg-white">
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start gap-2">
+                          <h4 className="font-display text-base text-forest line-clamp-1 font-medium">
+                            {item.name}
+                          </h4>
                           <button
-                            onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
-                            className="px-2.5 py-1 text-taupe hover:text-ink transition-colors"
-                            aria-label="Decrease quantity"
+                            onClick={() => removeFromCart(item.id, item.finish, item.size)}
+                            className="text-moss hover:text-maroon transition-colors p-1"
+                            aria-label={`Remove ${item.name} from bag`}
                           >
-                            <Minus className="w-3 h-3" strokeWidth={1.5} />
-                          </button>
-                          <span className="px-2 py-1 text-xs font-medium text-ink min-w-[24px] text-center">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
-                            className="px-2.5 py-1 text-taupe hover:text-ink transition-colors"
-                            aria-label="Increase quantity"
-                          >
-                            <Plus className="w-3 h-3" strokeWidth={1.5} />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
 
-                        {/* Price */}
-                        <span className="text-sm font-medium text-ink">
-                          {BRAND.currency.format(item.product.price * item.quantity)}
+                        {/* Variant details */}
+                        <p className="text-xs text-moss font-sans mt-0.5">
+                          {item.finish} {item.size && item.size !== 'One Size' ? `· ${item.size}` : ''}
+                        </p>
+                      </div>
+
+                      {/* Stepper & Price Row */}
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex items-center border border-hairline bg-cream">
+                          <button
+                            onClick={() =>
+                              updateQuantity(item.id, item.finish, item.size, item.quantity - 1)
+                            }
+                            className="p-1.5 hover:bg-hairline/40 transition-colors text-ink"
+                            aria-label="Decrease quantity"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-8 text-center text-xs font-sans font-medium text-ink">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() =>
+                              updateQuantity(item.id, item.finish, item.size, item.quantity + 1)
+                            }
+                            className="p-1.5 hover:bg-hairline/40 transition-colors text-ink"
+                            aria-label="Increase quantity"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        <span className="text-sm font-medium font-sans text-forest">
+                          {BRAND.currency.format(item.price * item.quantity)}
                         </span>
                       </div>
                     </div>
@@ -185,131 +180,86 @@ export default function CartDrawer() {
               )}
             </div>
 
-            {/* Extras: Gift wrap, Coupon & Notes (only when items present) */}
+            {/* Sticky Drawer Footer */}
             {items.length > 0 && (
-              <div className="px-6 py-3 border-t border-hairline bg-cream/30 space-y-3 text-xs">
-                {/* Gift Wrap option */}
-                <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={isGiftWrap}
-                    onChange={(e) => setIsGiftWrap(e.target.checked)}
-                    className="w-4 h-4 accent-gold rounded-none"
-                  />
-                  <Gift className="w-3.5 h-3.5 text-gold flex-shrink-0" />
-                  <span className="text-ink">Add luxury gift wrap &amp; handwritten card (+PKR 350)</span>
-                </label>
-
-                {/* Coupon Code Accordion */}
-                <div>
-                  {couponCode ? (
-                    <div className="flex items-center justify-between bg-white px-3 py-1.5 border border-hairline text-ink">
-                      <span className="flex items-center gap-1.5 font-medium text-gold">
-                        <Tag className="w-3 h-3" /> {couponCode} (-{BRAND.currency.format(discountAmount)})
-                      </span>
-                      <button
-                        onClick={removeCoupon}
-                        className="text-taupe hover:text-garnet text-[11px] underline"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleApplyCoupon} className="flex gap-2">
+              <div className="p-6 bg-ivory border-t border-hairline space-y-4">
+                {/* Coupon & Notes Toggles */}
+                <div className="flex items-center justify-between text-xs text-moss border-b border-hairline/60 pb-3">
+                  <div className="flex items-center gap-1.5">
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
                       <input
-                        type="text"
-                        value={inputCoupon}
-                        onChange={(e) => setInputCoupon(e.target.value)}
-                        placeholder="Coupon code (e.g. AURELLE10)"
-                        className="flex-1 bg-white border border-hairline px-3 py-1 text-xs uppercase focus:outline-none focus:border-gold"
+                        type="checkbox"
+                        checked={isGiftWrap}
+                        onChange={(e) => setIsGiftWrap(e.target.checked)}
+                        className="w-3.5 h-3.5 accent-forest rounded-none"
                       />
-                      <button
-                        type="submit"
-                        className="bg-ink text-ivory px-3 py-1 text-[11px] uppercase tracking-label hover:bg-gold hover:text-ink transition-colors"
-                      >
-                        Apply
-                      </button>
-                    </form>
-                  )}
-                </div>
-
-                {/* Order Note Toggle */}
-                <div>
+                      <span>Gift packaging (+PKR 350)</span>
+                    </label>
+                  </div>
                   <button
                     onClick={() => setShowNoteInput(!showNoteInput)}
-                    className="text-taupe hover:text-ink underline text-[11px]"
+                    className="underline hover:text-forest transition-colors"
                   >
-                    {showNoteInput ? 'Close note' : '+ Add special instructions or gift message'}
+                    {showNoteInput ? 'Hide note' : 'Add gift note'}
                   </button>
-                  {showNoteInput && (
-                    <textarea
-                      value={orderNote}
-                      onChange={(e) => setOrderNote(e.target.value)}
-                      placeholder="Write your note or gift message here..."
-                      rows={2}
-                      className="w-full mt-2 p-2 bg-white border border-hairline text-xs focus:outline-none focus:border-gold"
-                    />
-                  )}
                 </div>
-              </div>
-            )}
 
-            {/* Footer with subtotal & CTA */}
-            {items.length > 0 && (
-              <div className="p-6 border-t border-hairline bg-ivory space-y-4">
+                {/* Optional Note Textarea */}
+                {showNoteInput && (
+                  <textarea
+                    value={orderNote}
+                    onChange={(e) => setOrderNote(e.target.value)}
+                    placeholder="Write a personal gift card message or delivery instruction..."
+                    rows={2}
+                    className="w-full p-2.5 text-xs bg-cream border border-hairline text-ink placeholder:text-moss/60 focus:outline-none focus:border-gold transition-colors font-sans resize-none"
+                  />
+                )}
+
+                {/* Subtotal Calculation */}
                 <div className="space-y-1.5 text-sm">
-                  <div className="flex justify-between text-taupe">
+                  <div className="flex justify-between text-moss">
                     <span>Subtotal</span>
                     <span>{BRAND.currency.format(subtotal)}</span>
                   </div>
-                  {discountAmount > 0 && (
-                    <div className="flex justify-between text-gold">
-                      <span>Discount ({couponCode})</span>
+
+                  {couponCode && (
+                    <div className="flex justify-between text-leaf">
+                      <span>Promo ({couponCode})</span>
                       <span>-{BRAND.currency.format(discountAmount)}</span>
                     </div>
                   )}
-                  {isGiftWrap && (
-                    <div className="flex justify-between text-taupe">
-                      <span>Gift Packaging</span>
-                      <span>PKR 350</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-baseline pt-2 border-t border-hairline text-base font-medium text-ink">
+
+                  <div className="flex justify-between text-base font-medium text-forest pt-2 border-t border-hairline">
                     <span>Estimated Total</span>
-                    <span className="font-display text-xl text-ink">
-                      {BRAND.currency.format(
-                        subtotal - discountAmount + (isGiftWrap ? 350 : 0)
-                      )}
-                    </span>
+                    <span>{BRAND.currency.format(subtotal - discountAmount + (isGiftWrap ? 350 : 0))}</span>
                   </div>
-                  <p className="text-[11px] text-taupe text-right">
-                    Taxes and shipping calculated at checkout
+                  <p className="text-[11px] text-moss/80 pt-0.5">
+                    Shipping &amp; prepaid incentives calculated at checkout.
                   </p>
                 </div>
 
-                <div className="space-y-2 pt-1">
-                  {/* Primary Checkout Button */}
-                  <button
-                    onClick={handleCheckout}
-                    className="w-full relative overflow-hidden bg-ink text-ivory py-4 text-xs uppercase tracking-label group flex items-center justify-center gap-2"
-                  >
-                    <span className="absolute inset-0 -translate-x-full bg-gold transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
-                    <span className="relative transition-colors duration-300 group-hover:text-ink font-medium">
-                      Proceed to Checkout
-                    </span>
-                    <ArrowRight className="w-3.5 h-3.5 relative transition-colors duration-300 group-hover:text-ink" />
-                  </button>
+                {/* Primary Checkout Button (Forest bg with Gold sweep per Design.md Section 4.3) */}
+                <button
+                  onClick={handleCheckout}
+                  className="w-full relative overflow-hidden bg-forest text-ivory py-4 text-xs uppercase tracking-label font-medium flex items-center justify-center gap-2 group shadow-sm"
+                >
+                  <span className="absolute inset-0 -translate-x-full bg-gold transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
+                  <span className="relative z-10 flex items-center justify-center gap-2 transition-colors duration-300 group-hover:text-ink">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Proceed to Checkout</span>
+                  </span>
+                </button>
 
-                  {/* Secondary View Bag Link */}
-                  <div className="text-center">
-                    <Link
-                      to="/cart"
-                      onClick={closeCart}
-                      className="text-xs text-taupe hover:text-ink underline underline-offset-4 tracking-label uppercase"
-                    >
-                      View Full Bag Page
-                    </Link>
-                  </div>
+                <div className="text-center">
+                  <button
+                    onClick={() => {
+                      closeCart();
+                      navigate('/cart');
+                    }}
+                    className="text-xs uppercase tracking-label text-moss hover:text-forest transition-colors py-1 inline-block"
+                  >
+                    View Bag Details &rarr;
+                  </button>
                 </div>
               </div>
             )}
@@ -319,4 +269,3 @@ export default function CartDrawer() {
     </AnimatePresence>
   );
 }
-

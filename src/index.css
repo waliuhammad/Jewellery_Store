@@ -3,26 +3,28 @@
 @tailwind utilities;
 
 :root {
-  --c-ivory: #FBF8F3;
-  --c-cream: #F5EEE4;
-  --c-champagne: #E7D3B5;
-  --c-blush: #F1DDD6;
-  --c-rose: #C98C7A;
-  --c-gold: #B8924A;
-  --c-ink: #2B2522;
-  --c-taupe: #6E625A;
-  --c-noir: #1C1917;
-  --c-hairline: #E4D9CB;
-  --c-sage: #6F8F72;
-  --c-garnet: #A33B3B;
+  --c-ivory: #FBF8F1;
+  --c-cream: #F4EFE2;
+  --c-champagne: #EADCB4;
+  --c-mist: #E3E9DA;
+  --c-forest: #0F3D33;
+  --c-emerald: #1E5E4E;
+  --c-deep: #0A2A22;
+  --c-maroon: #6A1724;
+  --c-gold: #B88F45;
+  --c-ink: #1E2A25;
+  --c-moss: #566558;
+  --c-hairline: #DDD8C3;
+  --c-leaf: #2F7A50;
+  --c-alert: #B3261E;
 
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
-  --shadow-soft: 0 12px 40px rgba(43, 37, 34, 0.08);
+  --shadow-soft: 0 12px 40px rgba(30, 42, 37, 0.08);
 }
 
 ::selection {
-  background: var(--c-blush);
-  color: var(--c-ink);
+  background: var(--c-maroon);
+  color: var(--c-ivory);
 }
 
 html {
@@ -37,12 +39,15 @@ html {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--c-ivory);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--c-hairline);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--c-gold);
 }
@@ -56,6 +61,7 @@ html {
   width: 100%;
   transition: all 0.3s var(--ease-luxe);
 }
+
 .input-luxe:focus {
   outline: none;
   border-bottom-color: var(--c-gold);
@@ -66,18 +72,17 @@ html {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    #F5EEE4 0%,
-    #E7D3B5 50%,
-    #F5EEE4 100%
-  );
+  background: linear-gradient(90deg,
+      #F4EFE2 0%,
+      #EADCB4 50%,
+      #F4EFE2 100%);
   background-size: 200% 100%;
   animation: gold-shimmer 2.2s infinite ease-in-out;
 }
@@ -87,6 +92,7 @@ html {
   0% {
     transform: translateX(0%);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -97,22 +103,14 @@ html {
   width: max-content;
   animation: marquee 35s linear infinite;
 }
+
 .animate-marquee:hover {
   animation-play-state: paused;
 }
 
-/* Focus styles for keyboard accessibility */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--c-gold);
-  outline-offset: 3px;
-}
-
-/* Reduced motion accessibility rule */
+/* Reduced motion accessibility */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -121,9 +119,4 @@ textarea:focus-visible {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .animate-marquee {
-    animation: none !important;
-    transform: none !important;
-  }
 }
-

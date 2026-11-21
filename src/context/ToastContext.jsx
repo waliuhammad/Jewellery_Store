@@ -38,10 +38,10 @@ export function ToastProvider({ children }) {
               className="pointer-events-auto bg-ivory border border-hairline shadow-soft px-5 py-3.5 flex items-center gap-3.5 text-ink text-sm w-full sm:w-auto"
             >
               {toast.type === 'success' && (
-                <CheckCircle2 className="w-4 h-4 text-sage flex-shrink-0" strokeWidth={1.5} />
+                <CheckCircle2 className="w-4 h-4 text-leaf flex-shrink-0" strokeWidth={1.5} />
               )}
               {toast.type === 'error' && (
-                <AlertCircle className="w-4 h-4 text-garnet flex-shrink-0" strokeWidth={1.5} />
+                <AlertCircle className="w-4 h-4 text-alert flex-shrink-0" strokeWidth={1.5} />
               )}
               {toast.type === 'info' && (
                 <Info className="w-4 h-4 text-gold flex-shrink-0" strokeWidth={1.5} />
@@ -49,7 +49,7 @@ export function ToastProvider({ children }) {
               <span className="font-sans text-[13px] leading-snug">{toast.message}</span>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="ml-auto text-taupe hover:text-ink transition-colors p-1"
+                className="ml-auto text-moss hover:text-forest transition-colors p-1"
                 aria-label="Close notification"
               >
                 <X className="w-3.5 h-3.5" strokeWidth={1.5} />

@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     <div className="overflow-hidden bg-ivory">
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION (Design.md Section 5.1) */}
       <section className="relative min-h-[90vh] lg:min-h-screen flex items-center justify-start overflow-hidden pt-20">
         {/* Background Image with warm grading */}
         <div className="absolute inset-0 z-0">
@@ -43,24 +43,25 @@ export default function Home() {
             className="w-full h-full object-cover object-center filter brightness-95"
             fetchpriority="high"
           />
-          {/* Top dark scrim for header visibility & gentle left gradient for editorial text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-noir/70 via-noir/35 to-noir/60 lg:bg-gradient-to-r lg:from-noir/80 lg:via-noir/45 lg:to-transparent" />
+          {/* Top dark scrim for header legibility & gentle left-to-right scrim (rgba(10,42,34,0.35) to transparent per Design.md 401) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-deep/75 via-deep/40 to-deep/65 lg:bg-gradient-to-r lg:from-deep/85 lg:via-deep/45 lg:to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-page mx-auto px-6 lg:px-12 py-24 w-full">
           <div className="max-w-2xl text-ivory">
-            {/* Small Label with Gold Rule */}
+            {/* Small Label with Gold Rule per Design.md 404 */}
             <div className="flex items-center gap-3 mb-6">
-              <span className="h-[1px] w-10 bg-gold" />
+              <span className="h-[1px] w-12 bg-gold" />
               <span className="text-xs uppercase tracking-label text-champagne font-medium">
-                Sunlit Radiance &bull; 2026 Collection
+                Spring-Lit Craft &bull; 2026 Collection
               </span>
             </div>
 
-            {/* MaskLines Headline */}
+            {/* MaskLines Headline: Cormorant 500, Hero size, Ivory, one italic word per Design.md 403 */}
             <MaskLines
               lines={['Pieces you’ll', 'reach for', 'every morning.']}
               className="font-display text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-normal leading-[1.02] tracking-tight text-ivory mb-6"
+              lineClassName="first:not-italic nth-2:italic"
             />
 
             <p className="font-sans text-base sm:text-lg text-ivory/80 max-w-lg mb-10 leading-relaxed font-light">
@@ -70,9 +71,10 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
               <Link
                 to="/shop"
-                className="relative overflow-hidden bg-ivory text-ink px-8 py-4 text-xs uppercase tracking-label font-medium group text-center hover:bg-champagne transition-colors"
+                className="relative overflow-hidden bg-forest text-ivory px-8 py-4 text-xs uppercase tracking-label font-medium group text-center"
               >
-                <span className="relative z-10 flex items-center justify-center gap-2">
+                <span className="absolute inset-0 -translate-x-full bg-gold transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
+                <span className="relative z-10 flex items-center justify-center gap-2 transition-colors duration-300 group-hover:text-ink">
                   Shop the Collection <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </Link>
@@ -93,181 +95,158 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. MARQUEE STRIP (Champagne Band) */}
+      {/* 2. MARQUEE STRIP (Champagne Band, 48px per Design.md 5.1) */}
       <div className="bg-champagne text-ink py-3.5 overflow-hidden border-y border-hairline select-none">
         <div className="animate-marquee whitespace-nowrap flex items-center gap-8 text-xs font-sans tracking-label uppercase font-medium">
           <span>Handpicked Demi-Fine Pieces</span>
           <span>&bull;</span>
-          <span>Complimentary Delivery over PKR 5,000</span>
+          <span>18k Gold Dipped &amp; Sterling Silver</span>
           <span>&bull;</span>
-          <span>7-Day Return &amp; Exchange Guarantee</span>
+          <span>Complimentary Delivery Across Pakistan Over PKR {BRAND.shipping.freeThreshold.toLocaleString()}</span>
           <span>&bull;</span>
-          <span>Cash on Delivery Across Pakistan</span>
+          <span>7-Day Effortless Returns</span>
           <span>&bull;</span>
-          <span>100% Hypoallergenic &amp; Lead Free</span>
+          <span>Signature Suede Keepsake Packaging</span>
           <span>&bull;</span>
-          <span>Handpicked Demi-Fine Pieces</span>
+          <span>Handcrafted In Lahore Atelier</span>
           <span>&bull;</span>
-          <span>Complimentary Delivery over PKR 5,000</span>
-          <span>&bull;</span>
-          <span>7-Day Return &amp; Exchange Guarantee</span>
-          <span>&bull;</span>
-          <span>Cash on Delivery Across Pakistan</span>
-          <span>&bull;</span>
-          <span>100% Hypoallergenic &amp; Lead Free</span>
         </div>
       </div>
 
-      {/* 3. SHOP BY CATEGORY (Asymmetric Editorial Grid) */}
-      <section className="py-20 lg:py-28 max-w-page mx-auto px-6 lg:px-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-          <div>
-            <span className="text-[11px] uppercase tracking-label text-taupe block mb-1">
-              Curated Categories
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-ink font-normal">
-              Explore by <span className="italic">Silhouette</span>
-            </h2>
-          </div>
-          <Link
-            to="/shop"
-            className="text-xs uppercase tracking-label font-medium text-ink hover:text-gold transition-colors mt-4 md:mt-0 flex items-center gap-1.5"
-          >
-            All Collections <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        {/* Asymmetric Category Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          {/* Tile 1: Rings (Tall 5-col on desktop) */}
-          <Link
-            to="/shop/rings"
-            className="md:col-span-5 relative group overflow-hidden bg-cream aspect-[4/5] flex items-end p-8"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=900&auto=format&fit=crop"
-              alt="Rings category"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-noir/70 via-noir/20 to-transparent" />
-            <div className="relative z-10 text-ivory flex justify-between items-end w-full">
-              <div>
-                <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
-                  8 Designs
-                </span>
-                <h3 className="font-display text-3xl font-medium">Rings &amp; Bands</h3>
-              </div>
-              <span className="w-9 h-9 rounded-full border border-ivory/40 flex items-center justify-center group-hover:bg-ivory group-hover:text-ink transition-colors">
-                <ArrowRight className="w-4 h-4" />
+      {/* 3. CATEGORIES ARCHIVE (Ivory: Asymmetric Editorial Layout per Design.md 5.1) */}
+      <section className="py-20 lg:py-28 bg-ivory">
+        <div className="max-w-page mx-auto px-6 lg:px-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 sm:mb-16">
+            <div>
+              <span className="text-xs uppercase tracking-label text-moss block mb-2">
+                The Curated Archive
               </span>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-forest font-normal">
+                Curated by <span className="italic">Silhouette</span>
+              </h2>
             </div>
-          </Link>
-
-          {/* Right column: 7-col split into 4 tiles */}
-          <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* Tile 2: Necklaces */}
             <Link
-              to="/shop/necklaces"
-              className="relative group overflow-hidden bg-cream aspect-square flex items-end p-6"
+              to="/shop"
+              className="text-xs uppercase tracking-label text-moss hover:text-forest transition-colors mt-4 sm:mt-0 inline-flex items-center gap-1.5 py-1"
             >
-              <img
-                src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=800&auto=format&fit=crop"
-                alt="Necklaces category"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-noir/70 via-noir/20 to-transparent" />
-              <div className="relative z-10 text-ivory">
-                <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
-                  Collar &amp; Pendants
-                </span>
-                <h3 className="font-display text-2xl font-medium">Necklaces</h3>
-              </div>
+              Browse All Categories &rarr;
             </Link>
+          </div>
 
-            {/* Tile 3: Earrings */}
-            <Link
-              to="/shop/earrings"
-              className="relative group overflow-hidden bg-cream aspect-square flex items-end p-6"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1630019852942-f89202989a59?q=80&w=800&auto=format&fit=crop"
-                alt="Earrings category"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-noir/70 via-noir/20 to-transparent" />
-              <div className="relative z-10 text-ivory">
-                <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
-                  Huggies &amp; Drops
-                </span>
-                <h3 className="font-display text-2xl font-medium">Earrings</h3>
-              </div>
-            </Link>
+          {/* Asymmetric Category Grid: One tall (rings), two wide (necklaces, earrings), two square (bracelets, sets) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
+            {/* 1. Rings (Tall Tile - 4 cols desktop) */}
+            <div className="lg:col-span-4 aspect-[4/5] sm:aspect-auto sm:row-span-2 relative group overflow-hidden bg-cream">
+              <Link to="/shop?category=rings" className="block w-full h-full relative">
+                <img
+                  src={CATEGORIES[0]?.image}
+                  alt={CATEGORIES[0]?.name}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep/70 via-deep/20 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 text-ivory">
+                  <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
+                    {CATEGORIES[0]?.count || 8} Pieces
+                  </span>
+                  <h3 className="font-display text-2xl lg:text-3xl font-medium">
+                    {CATEGORIES[0]?.name}
+                  </h3>
+                </div>
+              </Link>
+            </div>
 
-            {/* Tile 4: Bracelets */}
-            <Link
-              to="/shop/bracelets"
-              className="relative group overflow-hidden bg-cream aspect-square flex items-end p-6"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1611591475824-340801a23864?q=80&w=800&auto=format&fit=crop"
-                alt="Bracelets category"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-noir/70 via-noir/20 to-transparent" />
-              <div className="relative z-10 text-ivory">
-                <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
-                  Cuffs &amp; Tennis
-                </span>
-                <h3 className="font-display text-2xl font-medium">Bracelets</h3>
-              </div>
-            </Link>
+            {/* 2. Necklaces (Wide Tile - 8 cols desktop) */}
+            <div className="lg:col-span-8 aspect-[16/9] sm:aspect-[2/1] relative group overflow-hidden bg-cream">
+              <Link to="/shop?category=necklaces" className="block w-full h-full relative">
+                <img
+                  src={CATEGORIES[1]?.image}
+                  alt={CATEGORIES[1]?.name}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep/70 via-deep/20 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 text-ivory">
+                  <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
+                    {CATEGORIES[1]?.count || 8} Pieces
+                  </span>
+                  <h3 className="font-display text-2xl lg:text-3xl font-medium">
+                    {CATEGORIES[1]?.name}
+                  </h3>
+                </div>
+              </Link>
+            </div>
 
-            {/* Tile 5: Sets */}
-            <Link
-              to="/shop/sets"
-              className="relative group overflow-hidden bg-cream aspect-square flex items-end p-6"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop"
-                alt="Sets category"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-noir/70 via-noir/20 to-transparent" />
-              <div className="relative z-10 text-ivory">
-                <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
-                  Heritage Sets
-                </span>
-                <h3 className="font-display text-2xl font-medium">Bridal &amp; Sets</h3>
-              </div>
-            </Link>
+            {/* 3. Earrings (Wide Tile - 4 cols desktop) */}
+            <div className="lg:col-span-4 aspect-square sm:aspect-[4/3] relative group overflow-hidden bg-cream">
+              <Link to="/shop?category=earrings" className="block w-full h-full relative">
+                <img
+                  src={CATEGORIES[2]?.image}
+                  alt={CATEGORIES[2]?.name}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep/70 via-deep/20 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 text-ivory">
+                  <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
+                    {CATEGORIES[2]?.count || 8} Pieces
+                  </span>
+                  <h3 className="font-display text-2xl font-medium">
+                    {CATEGORIES[2]?.name}
+                  </h3>
+                </div>
+              </Link>
+            </div>
+
+            {/* 4. Bracelets & Bangles (Square - 4 cols desktop) */}
+            <div className="lg:col-span-4 aspect-square sm:aspect-[4/3] relative group overflow-hidden bg-cream">
+              <Link to="/shop?category=bracelets" className="block w-full h-full relative">
+                <img
+                  src={CATEGORIES[3]?.image}
+                  alt={CATEGORIES[3]?.name}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep/70 via-deep/20 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 text-ivory">
+                  <span className="text-[10px] uppercase tracking-label text-champagne block mb-1">
+                    {CATEGORIES[3]?.count || 6} Pieces
+                  </span>
+                  <h3 className="font-display text-2xl font-medium">
+                    {CATEGORIES[3]?.name}
+                  </h3>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 4. NEW ARRIVALS (Horizontal Carousel with snap) */}
+      {/* 4. NEW ARRIVALS (Cream Background: Horizontal Snap Carousel per Design.md 5.1) */}
       <section className="bg-cream py-20 lg:py-28 border-y border-hairline">
         <div className="max-w-page mx-auto px-6 lg:px-12">
-          <div className="flex items-end justify-between mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10">
             <div>
-              <span className="text-[11px] uppercase tracking-label text-taupe block mb-1">
-                Just Arrived
+              <span className="text-xs uppercase tracking-label text-moss block mb-1">
+                Just Unveiled
               </span>
-              <h2 className="font-display text-3xl sm:text-4xl text-ink font-normal">
-                New In the <span className="italic">Atelier</span>
+              <h2 className="font-display text-3xl sm:text-4xl text-forest font-normal">
+                New Additions to the <span className="italic">Collection</span>
               </h2>
             </div>
-            {/* Carousel navigation arrows */}
-            <div className="flex items-center gap-2">
+
+            {/* Desktop Navigation Arrows */}
+            <div className="flex items-center gap-3 mt-4 sm:mt-0">
               <button
                 onClick={() => scrollCarousel('left')}
-                className="w-10 h-10 border border-hairline rounded-full flex items-center justify-center hover:bg-ivory hover:border-gold transition-colors text-ink"
+                className="w-10 h-10 border border-hairline flex items-center justify-center hover:border-forest text-ink hover:text-forest transition-colors bg-ivory"
                 aria-label="Previous items"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => scrollCarousel('right')}
-                className="w-10 h-10 border border-hairline rounded-full flex items-center justify-center hover:bg-ivory hover:border-gold transition-colors text-ink"
+                className="w-10 h-10 border border-hairline flex items-center justify-center hover:border-forest text-ink hover:text-forest transition-colors bg-ivory"
                 aria-label="Next items"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -275,14 +254,15 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Horizontal Snap Scroll Container */}
           <div
             ref={carouselRef}
-            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4"
+            className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-none -mx-6 px-6 lg:-mx-12 lg:px-12"
           >
             {newArrivals.map((product) => (
               <div
                 key={product.id}
-                className="w-[280px] sm:w-[320px] flex-shrink-0 snap-start"
+                className="w-[260px] sm:w-[290px] flex-shrink-0 snap-start"
               >
                 <ProductCard product={product} />
               </div>
@@ -291,64 +271,59 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. EDITORIAL SPLIT (Large image + overlapping text card) */}
-      <section className="py-24 lg:py-32 max-w-page mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative">
-          {/* Large image 7 cols */}
-          <div className="lg:col-span-7 relative h-[480px] sm:h-[600px] overflow-hidden bg-cream">
-            <ImageReveal
-              src="https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?q=80&w=1200&auto=format&fit=crop"
-              alt="Editorial model wearing Aurelle Jewels"
-              className="w-full h-full"
-            />
-          </div>
-
-          {/* Overlapping Text Card 6 cols */}
-          <div className="lg:col-span-5 lg:-ml-16 z-10 bg-ivory p-8 sm:p-12 border border-hairline shadow-soft">
-            <span className="text-[11px] uppercase tracking-label text-gold font-medium block mb-3">
-              01 &bull; The Philosophy
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl text-ink font-normal leading-snug mb-5">
-              Sensory, intimate, and sculpted for <span className="italic">daily grace</span>.
-            </h2>
-            <p className="font-sans text-sm text-taupe leading-relaxed mb-6 font-light">
-              We reject the cold glass cases of traditional jewelry stores. Every Aurelle piece is weighed for real movement: heavy enough to feel genuine, light enough to wear from a morning cappuccino through late night laughter.
-            </p>
-            <div className="space-y-3 pt-2 pb-6 border-y border-hairline text-xs font-sans text-ink">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-                <span>Heavy 18k and 22k gold immersion plating</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-                <span>Anti-tarnish transparent ceramic sealed finish</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-                <span>Shipped in our signature velvet-cushioned boxes</span>
-              </div>
+      {/* 5. EDITORIAL SPLIT (Ivory: Large 7-col image with 80px overlapping card per Design.md 5.1) */}
+      <section className="py-24 lg:py-32 bg-ivory">
+        <div className="max-w-page mx-auto px-6 lg:px-12">
+          <div className="relative grid grid-cols-1 lg:grid-cols-12 items-center">
+            {/* Large Image (7 columns) */}
+            <div className="lg:col-span-7 h-[420px] sm:h-[540px] lg:h-[620px] relative overflow-hidden bg-cream">
+              <ImageReveal
+                src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1200&auto=format&fit=crop"
+                alt="Editorial jewelry closeup"
+                className="w-full h-full"
+              />
             </div>
-            <Link
-              to="/about"
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-label font-medium text-ink hover:text-gold transition-colors pt-6"
-            >
-              Discover Our Atelier Story &rarr;
-            </Link>
+
+            {/* Overlapping Text Card (80px overlap on desktop) */}
+            <div className="lg:col-span-6 lg:-ml-20 mt-8 lg:mt-0 z-10">
+              <Reveal delay={0.2}>
+                <div className="bg-cream p-8 sm:p-12 lg:p-14 border border-hairline shadow-soft max-w-xl">
+                  <span className="text-[11px] uppercase tracking-label text-moss block mb-2">
+                    Our Philosophy
+                  </span>
+                  <h2 className="font-display text-3xl sm:text-4xl text-forest font-normal leading-tight mb-6">
+                    Designed for <span className="italic">quiet mornings</span> and enduring confidence.
+                  </h2>
+                  <p className="font-sans text-sm sm:text-base text-ink/80 leading-relaxed font-light mb-8">
+                    We believe everyday jewelry shouldn't be fragile, nor should it lose its golden warmth after a summer afternoon. Each piece is cast in hypoallergenic metals and coated with resilient microscopic sealants.
+                  </p>
+                  <Link
+                    to="/about"
+                    className="relative inline-block overflow-hidden bg-forest text-ivory px-8 py-3.5 text-xs uppercase tracking-label font-medium group"
+                  >
+                    <span className="absolute inset-0 -translate-x-full bg-gold transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
+                    <span className="relative z-10 transition-colors duration-300 group-hover:text-ink">
+                      Explore Our Story &rarr;
+                    </span>
+                  </Link>
+                </div>
+              </Reveal>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 6. BESTSELLERS (4-column Grid) */}
+      {/* 6. BESTSELLERS (Ivory: 4-Up Grid per Design.md 5.1) */}
       <section className="py-20 lg:py-28 bg-ivory border-t border-hairline">
         <div className="max-w-page mx-auto px-6 lg:px-12">
-          <div className="text-center max-w-xl mx-auto mb-16">
-            <span className="text-[11px] uppercase tracking-label text-taupe block mb-1">
-              Most Loved
+          <div className="text-center max-w-xl mx-auto mb-14">
+            <span className="text-xs uppercase tracking-label text-moss block mb-1">
+              Most Adored
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-ink font-normal">
-              Signature <span className="italic">Bestsellers</span>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-forest font-normal">
+              The Atelier <span className="italic">Bestsellers</span>
             </h2>
-            <p className="text-sm text-taupe mt-3 font-light">
+            <p className="text-sm text-moss mt-3 font-light">
               The everyday icons that have earned permanent residency on dressing tables nationwide.
             </p>
           </div>
@@ -362,7 +337,7 @@ export default function Home() {
           <div className="mt-14 text-center">
             <Link
               to="/shop"
-              className="relative inline-block overflow-hidden bg-ink text-ivory px-10 py-4 text-xs uppercase tracking-label font-medium group"
+              className="relative inline-block overflow-hidden bg-forest text-ivory px-10 py-4 text-xs uppercase tracking-label font-medium group"
             >
               <span className="absolute inset-0 -translate-x-full bg-gold transition-transform duration-300 ease-luxe group-hover:translate-x-0" />
               <span className="relative transition-colors duration-300 group-hover:text-ink">
@@ -373,14 +348,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. OCCASION TABS (Blush Band) */}
-      <section className="bg-blush/40 py-20 lg:py-28 border-y border-hairline">
+      {/* 7. OCCASION TABS (Mist Band per Design.md 5.1 & 2.1) */}
+      <section className="bg-mist py-20 lg:py-28 border-y border-hairline">
         <div className="max-w-page mx-auto px-6 lg:px-12">
           <div className="text-center max-w-lg mx-auto mb-10">
-            <span className="text-[11px] uppercase tracking-label text-taupe block mb-1">
+            <span className="text-[11px] uppercase tracking-label text-forest/70 block mb-1">
               Curated by Moment
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl text-ink font-normal">
+            <h2 className="font-display text-3xl sm:text-4xl text-forest font-normal">
               Jewelry for <span className="italic">Every Chapter</span>
             </h2>
           </div>
@@ -393,9 +368,8 @@ export default function Home() {
                 <button
                   key={occ.id}
                   onClick={() => setActiveOccasion(occ.id)}
-                  className={`text-xs uppercase tracking-label font-medium transition-colors relative pb-3 ${
-                    isActive ? 'text-ink' : 'text-taupe hover:text-ink'
-                  }`}
+                  className={`text-xs uppercase tracking-label font-medium transition-colors relative pb-3 ${isActive ? 'text-forest' : 'text-moss hover:text-forest'
+                    }`}
                 >
                   {occ.name}
                   {isActive && (
@@ -427,8 +401,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. CRAFT AND CARE (Dark Noir Band with 4 Numbered Items) */}
-      <section className="bg-noir text-ivory py-20 lg:py-28 border-y border-hairline/20">
+      {/* 8. CRAFT AND CARE (Maroon Band: The one dark band per Design.md Section 5.1 & 2.1.1) */}
+      <section className="bg-maroon text-ivory py-20 lg:py-28 border-y border-hairline/20">
         <div className="max-w-page mx-auto px-6 lg:px-12">
           <div className="max-w-xl mb-16">
             <span className="text-[11px] uppercase tracking-label text-champagne block mb-2">
@@ -439,48 +413,49 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* 4 Numbered Items (Not Icon Cards per PRD strict rules) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 border-t border-champagne/15 pt-12">
+          {/* 4 Numbered Items per Design.md 5.1 (01 Materials, 02 Finish, 03 Packaging, 04 Returns) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 border-t border-champagne/20 pt-12">
             <div>
               <span className="font-display text-2xl text-champagne block mb-3 font-medium">01</span>
               <h3 className="font-display text-xl text-ivory mb-2 font-semibold">Precious Materials</h3>
-              <p className="font-sans text-sm text-ivory/70 leading-relaxed font-light">
+              <p className="font-sans text-sm text-ivory/75 leading-relaxed font-light">
                 Recycled 925 sterling silver, surgical stainless cores, and genuine freshwater baroque pearls selected one by one.
               </p>
             </div>
+
             <div>
               <span className="font-display text-2xl text-champagne block mb-3 font-medium">02</span>
-              <h3 className="font-display text-xl text-ivory mb-2 font-semibold">Micron Vermeil Finish</h3>
-              <p className="font-sans text-sm text-ivory/70 leading-relaxed font-light">
-                Thick 18k and 22k gold immersion sealed with a microscopic anti-tarnish ceramic coat for enduring daily luster.
+              <h3 className="font-display text-xl text-ivory mb-2 font-semibold">Gold Immersion</h3>
+              <p className="font-sans text-sm text-ivory/75 leading-relaxed font-light">
+                Thick micron gold plating treated with a protective anti-tarnish ceramic wash to endure warm weather and daily wear.
               </p>
             </div>
+
             <div>
               <span className="font-display text-2xl text-champagne block mb-3 font-medium">03</span>
-              <h3 className="font-display text-xl text-ivory mb-2 font-semibold">Velvet Keepsake Box</h3>
-              <p className="font-sans text-sm text-ivory/70 leading-relaxed font-light">
-                Every order arrives encased in our signature rigid cream box with a custom microfiber travel pouch and polishing cloth.
+              <h3 className="font-display text-xl text-ivory mb-2 font-semibold">Curated Packaging</h3>
+              <p className="font-sans text-sm text-ivory/75 leading-relaxed font-light">
+                Every piece arrives tucked in our bespoke suede keepsake pouch, ready for celebratory gifting.
               </p>
             </div>
+
             <div>
               <span className="font-display text-2xl text-champagne block mb-3 font-medium">04</span>
-              <h3 className="font-display text-xl text-ivory mb-2 font-semibold">Unhurried 7-Day Returns</h3>
-              <p className="font-sans text-sm text-ivory/70 leading-relaxed font-light">
-                Try your pieces at home in your own lighting. If anything does not suit your style, our team arranges immediate exchange.
+              <h3 className="font-display text-xl text-ivory mb-2 font-semibold">Gentle Returns</h3>
+              <p className="font-sans text-sm text-ivory/75 leading-relaxed font-light">
+                Enjoy 7 calendar days to try your jewelry in morning light. Return or exchange with effortless courier pickup.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 9. REVIEWS (Big Pull-Quote Rotator) */}
+      {/* 9. CLIENT REVIEWS (Cream Background: Big Pull-Quote with Gold Stars per Design.md 5.1) */}
       <section className="bg-cream py-24 lg:py-32">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="flex justify-center items-center gap-1.5 mb-6 text-gold">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 fill-gold text-gold" />
-            ))}
-          </div>
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <span className="text-[11px] uppercase tracking-label text-moss block mb-4">
+            Client Words
+          </span>
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -488,32 +463,40 @@ export default function Home() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.5 }}
+              className="space-y-6"
             >
-              <blockquote className="font-display text-2xl sm:text-3xl lg:text-4xl text-ink font-normal leading-relaxed italic mb-8 max-w-3xl mx-auto">
-                &ldquo;{REVIEWS[currentReviewIndex].quote}&rdquo;
+              {/* Gold Star Ratings */}
+              <div className="flex justify-center gap-1 text-gold">
+                {[...Array(REVIEWS[currentReviewIndex]?.rating || 5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-gold text-gold" />
+                ))}
+              </div>
+
+              {/* Big Serif Pull Quote */}
+              <blockquote className="font-display text-2xl sm:text-3xl lg:text-4xl text-forest italic font-normal leading-relaxed">
+                "{REVIEWS[currentReviewIndex]?.text}"
               </blockquote>
 
-              <div className="text-sm">
-                <span className="font-medium text-ink tracking-wide block">
-                  {REVIEWS[currentReviewIndex].author} &bull; {REVIEWS[currentReviewIndex].city}
-                </span>
-                <span className="text-xs text-taupe mt-0.5 block">
-                  Purchased {REVIEWS[currentReviewIndex].product}
-                </span>
+              <div className="pt-2">
+                <p className="font-sans text-xs uppercase tracking-label font-medium text-forest">
+                  {REVIEWS[currentReviewIndex]?.author}
+                </p>
+                <p className="text-xs text-moss mt-0.5">
+                  {REVIEWS[currentReviewIndex]?.location} &bull; Verified Client
+                </p>
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Dots navigation */}
-          <div className="flex items-center justify-center gap-2 mt-10">
+          {/* Dots Indicator */}
+          <div className="flex justify-center items-center gap-2 mt-10">
             {REVIEWS.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentReviewIndex(idx)}
-                className={`h-1.5 transition-all duration-300 rounded-full ${
-                  idx === currentReviewIndex ? 'w-8 bg-gold' : 'w-2 bg-hairline hover:bg-taupe'
-                }`}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${currentReviewIndex === idx ? 'bg-gold w-6' : 'bg-hairline hover:bg-moss'
+                  }`}
                 aria-label={`Go to review ${idx + 1}`}
               />
             ))}
@@ -521,25 +504,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 10. INSTAGRAM GALLERY STRIP */}
-      <section className="py-20 lg:py-24 bg-ivory">
+      {/* 10. SOCIAL GALLERY STRIP (Ivory: 5 Square Images per Design.md 5.1) */}
+      <section className="py-20 bg-ivory border-t border-hairline">
         <div className="max-w-page mx-auto px-6 lg:px-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10">
-            <div>
-              <span className="text-[11px] uppercase tracking-label text-taupe block mb-1">
-                @aurellejewels
-              </span>
-              <h3 className="font-display text-2xl sm:text-3xl text-ink font-normal">
-                Worn in the <span className="italic">Wild</span>
-              </h3>
-            </div>
+          <div className="text-center mb-10">
+            <span className="text-[11px] uppercase tracking-label text-moss block mb-1">
+              Follow Along
+            </span>
             <a
               href={BRAND.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs uppercase tracking-label text-ink hover:text-gold transition-colors underline underline-offset-4 mt-2 sm:mt-0"
+              className="font-display text-2xl sm:text-3xl text-forest hover:text-emerald transition-colors inline-block"
             >
-              Follow on Instagram &rarr;
+              @minhajewellers on Instagram
             </a>
           </div>
 
@@ -551,25 +529,17 @@ export default function Home() {
               'https://images.unsplash.com/photo-1611591475824-340801a23864?q=80&w=600&auto=format&fit=crop',
               'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop',
             ].map((imgUrl, i) => (
-              <a
-                key={i}
-                href={BRAND.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative aspect-square overflow-hidden bg-cream block"
-              >
+              <div key={i} className="aspect-square bg-cream overflow-hidden group relative">
                 <img
                   src={imgUrl}
-                  alt={`Aurelle client moment ${i + 1}`}
-                  className="w-full h-full object-cover transition-transform duration-500 ease-luxe group-hover:scale-108"
+                  alt={`Minha Jewellers community story ${i + 1}`}
+                  className="w-full h-full object-cover transition-transform duration-500 ease-luxe group-hover:scale-105"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-noir/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-ivory">
-                  <span className="text-xs uppercase tracking-label font-medium bg-ivory text-ink px-3 py-1.5 shadow-sm">
-                    View
-                  </span>
+                <div className="absolute inset-0 bg-deep/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-ivory">
+                  <span className="text-xs uppercase tracking-label font-medium">View</span>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
         </div>
@@ -577,4 +547,3 @@ export default function Home() {
     </div>
   );
 }
-

@@ -73,14 +73,14 @@ export default function SearchModal({ isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex flex-col justify-start">
-          {/* Backdrop */}
+          {/* Backdrop: Deep Forest 50% per Design.md */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={onClose}
-            className="absolute inset-0 bg-noir/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-deep/50 backdrop-blur-sm"
           />
 
           {/* Modal Panel */}
@@ -94,19 +94,19 @@ export default function SearchModal({ isOpen, onClose }) {
             <div className="max-w-4xl mx-auto px-6 py-8 md:py-12">
               {/* Header and Input */}
               <div className="flex items-center justify-between border-b border-hairline pb-4 relative">
-                <Search className="w-5 h-5 text-taupe mr-3 flex-shrink-0" strokeWidth={1.5} />
+                <Search className="w-5 h-5 text-moss mr-3 flex-shrink-0" strokeWidth={1.5} />
                 <input
                   ref={inputRef}
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search rings, necklaces, pearls, kundan..."
-                  className="w-full bg-transparent text-xl md:text-2xl font-display placeholder:font-sans placeholder:text-sm placeholder:text-taupe/60 text-ink focus:outline-none"
+                  className="w-full bg-transparent text-xl md:text-2xl font-display placeholder:font-sans placeholder:text-sm placeholder:text-moss/60 text-forest focus:outline-none"
                 />
                 {query && (
                   <button
                     onClick={() => setQuery('')}
-                    className="p-1 text-taupe hover:text-ink mr-2"
+                    className="p-1 text-moss hover:text-forest mr-2 transition-colors"
                     aria-label="Clear search"
                   >
                     <X className="w-4 h-4" />
@@ -114,7 +114,7 @@ export default function SearchModal({ isOpen, onClose }) {
                 )}
                 <button
                   onClick={onClose}
-                  className="p-2 -mr-2 text-taupe hover:text-ink transition-colors"
+                  className="p-2 -mr-2 text-moss hover:text-forest transition-colors"
                   aria-label="Close search dialog"
                 >
                   <X className="w-6 h-6" strokeWidth={1.5} />
@@ -125,7 +125,7 @@ export default function SearchModal({ isOpen, onClose }) {
               <div className="mt-8">
                 {query.trim() === '' ? (
                   <div>
-                    <p className="text-[11px] uppercase tracking-label text-taupe mb-4">
+                    <p className="text-[11px] uppercase tracking-label text-gold font-medium mb-4">
                       Popular Categories
                     </p>
                     <div className="flex flex-wrap gap-2.5">
@@ -133,7 +133,7 @@ export default function SearchModal({ isOpen, onClose }) {
                         <button
                           key={cat.id}
                           onClick={() => handleCategoryClick(cat.slug)}
-                          className="px-4 py-2 text-xs uppercase tracking-label border border-hairline hover:border-gold hover:bg-cream transition-colors text-ink"
+                          className="px-4 py-2 text-xs uppercase tracking-label border border-hairline hover:border-gold hover:bg-cream transition-colors text-forest"
                         >
                           {cat.name}
                         </button>
@@ -141,7 +141,7 @@ export default function SearchModal({ isOpen, onClose }) {
                     </div>
 
                     <div className="mt-8 pt-8 border-t border-hairline">
-                      <p className="text-[11px] uppercase tracking-label text-taupe mb-4">
+                      <p className="text-[11px] uppercase tracking-label text-gold font-medium mb-4">
                         Curated Highlights
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -149,18 +149,18 @@ export default function SearchModal({ isOpen, onClose }) {
                           <div
                             key={item.id}
                             onClick={() => handleProductClick(item.slug)}
-                            className="group flex items-center gap-3 cursor-pointer p-2 hover:bg-cream/60 transition-colors"
+                            className="group flex items-center gap-3 cursor-pointer p-2 hover:bg-cream/60 transition-colors border border-transparent hover:border-hairline"
                           >
                             <img
                               src={item.images[0]}
                               alt={item.name}
-                              className="w-14 h-16 object-cover flex-shrink-0"
+                              className="w-14 h-16 object-cover flex-shrink-0 border border-hairline"
                             />
                             <div className="min-w-0">
-                              <h4 className="font-display text-sm text-ink truncate group-hover:text-gold transition-colors">
+                              <h4 className="font-display text-sm text-forest truncate group-hover:text-gold transition-colors font-medium">
                                 {item.name}
                               </h4>
-                              <p className="text-xs text-taupe">{BRAND.currency.format(item.price)}</p>
+                              <p className="text-xs text-moss">{BRAND.currency.format(item.price)}</p>
                             </div>
                           </div>
                         ))}
@@ -170,13 +170,13 @@ export default function SearchModal({ isOpen, onClose }) {
                 ) : results.length > 0 ? (
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <p className="text-[11px] uppercase tracking-label text-taupe">
+                      <p className="text-[11px] uppercase tracking-label text-moss">
                         {results.length} {results.length === 1 ? 'piece found' : 'pieces found'}
                       </p>
                       <Link
                         to={`/shop?search=${encodeURIComponent(query)}`}
                         onClick={onClose}
-                        className="text-xs text-gold hover:underline flex items-center gap-1"
+                        className="text-xs text-gold hover:text-forest hover:underline flex items-center gap-1 transition-colors"
                       >
                         View all in shop <ArrowRight className="w-3 h-3" />
                       </Link>
@@ -191,21 +191,21 @@ export default function SearchModal({ isOpen, onClose }) {
                           <img
                             src={product.images[0]}
                             alt={product.name}
-                            className="w-16 h-20 object-cover flex-shrink-0"
+                            className="w-16 h-20 object-cover flex-shrink-0 border border-hairline"
                           />
                           <div className="min-w-0 flex-1">
-                            <span className="text-[10px] uppercase tracking-label text-taupe block mb-0.5">
+                            <span className="text-[10px] uppercase tracking-label text-moss block mb-0.5">
                               {product.category}
                             </span>
-                            <h4 className="font-display text-base text-ink leading-tight truncate group-hover:text-gold transition-colors">
+                            <h4 className="font-display text-base text-forest leading-tight truncate group-hover:text-gold transition-colors font-medium">
                               {product.name}
                             </h4>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs font-medium text-ink">
+                              <span className={`text-xs font-medium ${product.compareAtPrice ? 'text-maroon' : 'text-forest'}`}>
                                 {BRAND.currency.format(product.price)}
                               </span>
                               {product.compareAtPrice && (
-                                <span className="text-xs text-taupe line-through">
+                                <span className="text-xs text-moss line-through">
                                   {BRAND.currency.format(product.compareAtPrice)}
                                 </span>
                               )}
@@ -217,8 +217,8 @@ export default function SearchModal({ isOpen, onClose }) {
                   </div>
                 ) : (
                   <div className="py-12 text-center">
-                    <p className="font-display text-2xl text-ink mb-2">No matching pieces found</p>
-                    <p className="text-sm text-taupe max-w-sm mx-auto mb-6">
+                    <p className="font-display text-2xl text-forest mb-2">No matching pieces found</p>
+                    <p className="text-sm text-moss max-w-sm mx-auto mb-6">
                       We could not find any jewelry matching "{query}". Try searching for pearls, rings, necklaces, or kundan.
                     </p>
                     <button
@@ -226,7 +226,7 @@ export default function SearchModal({ isOpen, onClose }) {
                         setQuery('');
                         inputRef.current?.focus();
                       }}
-                      className="text-xs uppercase tracking-label text-gold underline underline-offset-4"
+                      className="text-xs uppercase tracking-label text-gold hover:text-forest underline underline-offset-4 transition-colors"
                     >
                       Clear search
                     </button>
@@ -240,4 +240,3 @@ export default function SearchModal({ isOpen, onClose }) {
     </AnimatePresence>
   );
 }
-

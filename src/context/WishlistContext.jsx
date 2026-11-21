@@ -4,12 +4,12 @@ import { PRODUCTS } from '../data/products';
 
 const WishlistContext = createContext(null);
 
-const STORAGE_KEY = 'aurelle_wishlist_items';
+const STORAGE_KEY = 'minha_wishlist_items';
 
 export function WishlistProvider({ children }) {
   const [wishlistIds, setWishlistIds] = useState(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('aurelle_wishlist_items');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];

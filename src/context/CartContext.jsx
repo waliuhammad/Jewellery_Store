@@ -4,14 +4,14 @@ import { BRAND } from '../config/brand';
 
 const CartContext = createContext(null);
 
-const STORAGE_KEY = 'aurelle_cart_items';
-const GIFT_WRAP_KEY = 'aurelle_gift_wrap';
-const NOTE_KEY = 'aurelle_order_note';
+const STORAGE_KEY = 'minha_cart_items';
+const GIFT_WRAP_KEY = 'minha_gift_wrap';
+const NOTE_KEY = 'minha_order_note';
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('aurelle_cart_items');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -21,7 +21,7 @@ export function CartProvider({ children }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isGiftWrap, setIsGiftWrap] = useState(() => {
     try {
-      return localStorage.getItem(GIFT_WRAP_KEY) === 'true';
+      return (localStorage.getItem(GIFT_WRAP_KEY) || localStorage.getItem('aurelle_gift_wrap')) === 'true';
     } catch {
       return false;
     }
@@ -131,7 +131,7 @@ export function CartProvider({ children }) {
       setCouponCode('');
       return false;
     }
-    if (trimmed === 'AURELLE10' || trimmed === 'WELCOME10') {
+    if (trimmed === 'MINHA10' || trimmed === 'WELCOME10' || trimmed === 'AURELLE10') {
       setDiscountPercent(10);
       setCouponCode(trimmed);
       showToast('10% promotional coupon applied.', 'success');

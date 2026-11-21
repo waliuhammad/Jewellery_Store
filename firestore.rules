@@ -1,0 +1,378 @@
+rules_version = '2';
+
+// ===============================================================
+// Cloud Firestore Security Rules - Aurelle Jewels E-Commerce
+// ===============================================================
+// Reference: PRD_Jewelry_Ecommerce.md (Sections 12.3 & 12.5)
+// ===============================================================
+// Assumed Data Models:
+//
+// 1. Collection: products/{productId}
+//    - name: string (1-150 chars)
+//    - slug: string (1-150 chars)
+//    - description: string (0-10000 chars)
+//    - shortDescription: string (0-1000 chars)
+//    - categoryId: string
+//    - price: number (> 0)
+//    - compareAtPrice: optional number
+//    - currency: string ("PKR")
+//    - isActive: bool (controls public storefront visibility)
+//    - variants: list of maps
+//    - images: list of image objects
+//    - tags, occasions, searchKeywords: list of strings
+//    - ratingAverage: number, ratingCount: number
+//    - createdAt, updatedAt: timestamp or ISO string
+//
+// 2. Collection: categories/{categoryId}
+//    - name, slug, description: string
+//    - image: string URL
+//    - order: number
+//    - isActive: bool
+//
+// 3. Collection: settings/{settingId} (e.g., settings/store)
+//    - storeName, currency: string
+//    - standardShippingFee, freeShippingThreshold: number
+//    - announcementText: string
+//    - bankDetails, wallets: map
+//    - isStoreOpen: bool
+//
+// 4. Collection: coupons/{code}
+//    - code, discountPercent / discountFixed, minOrder, maxDiscount, expiresAt, isActive
+//    - Validated exclusively via backend API; direct client access blocked
+//
+// 5. Collection: orders/{orderId}
+//    - orderNumber: string (AJ-YYMMDD-XXXX)
+//    - userId: string or null
+//    - customer: map { name, phone, email }
+//    - shippingAddress: map
+//    - items: list of line items
+//    - subtotal, shippingFee, discount, giftWrapFee, total: number
+//    - paymentMethod, paymentStatus: string
+//    - status: string (pending, confirmed, packed, shipped, out_for_delivery, delivered, cancelled, returned)
+//    - Written strictly through backend Node.js API with Firebase Admin SDK
+//    - Clients can only read their own orders (resource.data.userId == request.auth.uid)
+//
+// 6. Collection: users/{uid}
+//    - uid / id: string (matching auth uid)
+//    - name: string (1-100 chars)
+//    - email: string
+//    - phone: optional string
+//    - role: string ('customer', 'admin', 'manager', 'support')
+//    - blocked: optional bool
+//    - addresses: optional list of address maps
+//    - createdAt, updatedAt: timestamp or ISO string
+//
+// 7. Subcollection: users/{uid}/addresses/{addressId}
+//    - id, label, fullName, phone, line1, city, province, postalCode, isDefault
+//
+// 8. Collection: carts/{uid} & wishlists/{uid}
+//    - items: list of saved items
+//    - updatedAt, createdAt: timestamp or ISO string
+//
+// 9. Collection: reviews/{id}
+//    - productId, userId, authorName, rating (1-5), title, body, images, status ('pending' | 'approved')
+//    - Public read for status == 'approved'
+//    - Authenticated users can create with matching userId and status in ['pending', 'approved']
+//
+// 10. Collections: contactMessages/{id} & newsletter/{id}
+//    - contactMessages: name, email, phone, subject, message, status, createdAt
+//    - newsletter: email, isActive, couponCode, subscribedAt
+//    - Write-only with strict validation; no client reads (staff only)
+//
+// 11. Admin Collections: staff/{uid}, siteContent/{docId}, auditLogs/{id}
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Global Helper Functions
+    // ===============================================================
+
+    // Check if user is authenticated with Firebase Auth
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if user is the resource owner by UID
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if authenticated user has Administrator role from custom claims
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'admin' || request.auth.token.admin == true);
+    }
+
+    // Check if authenticated user is store staff (admin, manager, support)
+    function isStaff() {
+      return isAuthenticated() && 
+        (isAdmin() || request.auth.token.role in ['manager', 'support']);
+    }
+
+    // Validate that only permitted fields are present in request payload
+    function hasOnlyAllowedFields(allowedFields) {
+      return request.resource.data.keys().hasOnly(allowedFields);
+    }
+
+    // Ensure specific immutable fields are not altered during an update
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // Format & length validation for email addresses
+    function isValidEmail(email) {
+      return email is string &&
+        email.size() >= 3 &&
+        email.size() <= 120 &&
+        email.matches('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
+    }
+
+    // Validate timestamp or ISO-8601 string bounded in length (DoS prevention)
+    function isValidTimestampOrString(val) {
+      return val is timestamp || (val is string && val.size() >= 10 && val.size() <= 50);
+    }
+
+    // Validate optional string field (if present, must be string and within length bounds)
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+        (request.resource.data[field] is string &&
+         request.resource.data[field].size() >= minLen &&
+         request.resource.data[field].size() <= maxLen);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    // 1. User Profile Validator
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['uid', 'id', 'name', 'email', 'phone', 'role', 'blocked', 'createdAt', 'updatedAt', 'addresses']) &&
+        data.name is string && data.name.size() >= 1 && data.name.size() <= 100 &&
+        isValidEmail(data.email) &&
+        isValidOptionalString('phone', 0, 30) &&
+        data.role is string && data.role in ['customer', 'admin', 'manager', 'support'] &&
+        (!('blocked' in data) || data.blocked is bool) &&
+        isValidTimestampOrString(data.createdAt) &&
+        (!('updatedAt' in data) || isValidTimestampOrString(data.updatedAt)) &&
+        (!('addresses' in data) || (data.addresses is list && data.addresses.size() <= 25)) &&
+        (!('uid' in data) || data.uid == request.auth.uid) &&
+        (!('id' in data) || data.id == request.auth.uid);
+    }
+
+    // 2. User Address Subcollection Validator
+    function isValidAddress(data) {
+      return hasOnlyAllowedFields(['id', 'label', 'fullName', 'phone', 'line1', 'city', 'province', 'postalCode', 'isDefault', 'createdAt', 'updatedAt']) &&
+        data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 100 &&
+        data.phone is string && data.phone.size() >= 5 && data.phone.size() <= 30 &&
+        data.line1 is string && data.line1.size() >= 1 && data.line1.size() <= 200 &&
+        data.city is string && data.city.size() >= 1 && data.city.size() <= 100 &&
+        data.province is string && data.province.size() >= 1 && data.province.size() <= 100 &&
+        data.isDefault is bool &&
+        isValidOptionalString('label', 0, 50) &&
+        isValidOptionalString('postalCode', 0, 20) &&
+        (!('id' in data) || (data.id is string && data.id.size() <= 100)) &&
+        (!('createdAt' in data) || isValidTimestampOrString(data.createdAt)) &&
+        (!('updatedAt' in data) || isValidTimestampOrString(data.updatedAt));
+    }
+
+    // 3. Cart Document Validator
+    function isValidCart(data) {
+      return hasOnlyAllowedFields(['items', 'updatedAt', 'createdAt']) &&
+        data.items is list && data.items.size() <= 50 &&
+        (!('createdAt' in data) || isValidTimestampOrString(data.createdAt)) &&
+        (!('updatedAt' in data) || isValidTimestampOrString(data.updatedAt));
+    }
+
+    // 4. Wishlist Document Validator
+    function isValidWishlist(data) {
+      return hasOnlyAllowedFields(['items', 'updatedAt', 'createdAt']) &&
+        data.items is list && data.items.size() <= 100 &&
+        (!('createdAt' in data) || isValidTimestampOrString(data.createdAt)) &&
+        (!('updatedAt' in data) || isValidTimestampOrString(data.updatedAt));
+    }
+
+    // 5. Product Review Validator
+    function isValidReviewCreate(data) {
+      return hasOnlyAllowedFields(['id', 'productId', 'userId', 'authorName', 'rating', 'title', 'body', 'images', 'isVerifiedPurchase', 'status', 'createdAt', 'updatedAt', 'reply']) &&
+        data.productId is string && data.productId.size() >= 1 && data.productId.size() <= 100 &&
+        data.userId is string && data.userId == request.auth.uid &&
+        isValidOptionalString('authorName', 0, 100) &&
+        data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+        data.title is string && data.title.size() <= 150 &&
+        data.body is string && data.body.size() >= 1 && data.body.size() <= 3000 &&
+        (!('images' in data) || (data.images is list && data.images.size() <= 8)) &&
+        (!('isVerifiedPurchase' in data) || data.isVerifiedPurchase is bool) &&
+        data.status in ['pending', 'approved'] &&
+        isValidTimestampOrString(data.createdAt);
+    }
+
+    // 6. Contact Form Message Validator
+    function isValidContactMessage(data) {
+      return hasOnlyAllowedFields(['id', 'name', 'email', 'phone', 'subject', 'message', 'status', 'read', 'createdAt']) &&
+        data.name is string && data.name.size() >= 1 && data.name.size() <= 100 &&
+        isValidEmail(data.email) &&
+        isValidOptionalString('phone', 0, 30) &&
+        isValidOptionalString('subject', 0, 150) &&
+        data.message is string && data.message.size() >= 1 && data.message.size() <= 3000 &&
+        isValidTimestampOrString(data.createdAt) &&
+        (!('status' in data) || (data.status is string && data.status.size() <= 30)) &&
+        (!('read' in data) || data.read is bool);
+    }
+
+    // 7. Newsletter Subscription Validator
+    function isValidNewsletter(data) {
+      return hasOnlyAllowedFields(['email', 'isActive', 'couponCode', 'subscribedAt', 'createdAt', 'source', 'status']) &&
+        isValidEmail(data.email) &&
+        (!('isActive' in data) || data.isActive is bool) &&
+        isValidOptionalString('couponCode', 0, 30) &&
+        (!('subscribedAt' in data) || isValidTimestampOrString(data.subscribedAt)) &&
+        (!('createdAt' in data) || isValidTimestampOrString(data.createdAt)) &&
+        isValidOptionalString('source', 0, 50) &&
+        isValidOptionalString('status', 0, 30);
+    }
+
+    // ===============================================================
+    // Collection Security Rules
+    // ===============================================================
+
+    // 1. Products Catalog
+    // Public read for active jewelry pieces; writes reserved for admin or backend server
+    match /products/{productId} {
+      allow read: if resource.data.isActive == true || isStaff();
+      allow write: if isAdmin();
+    }
+
+    // 2. Categories
+    // Public read for active categories; writes reserved for admin or backend server
+    match /categories/{categoryId} {
+      allow read: if resource.data.isActive == true || isStaff();
+      allow write: if isAdmin();
+    }
+
+    // 3. Settings (e.g. settings/store)
+    // Public read for store configuration; no client writes
+    match /settings/{settingId} {
+      allow read: if settingId == 'store' || isStaff();
+      allow write: if isAdmin();
+    }
+
+    // 4. Coupons
+    // Strictly backend validated at checkout; no direct client read or write
+    match /coupons/{couponId} {
+      allow read: if isStaff();
+      allow write: if isAdmin();
+    }
+
+    // 5. Orders
+    // Zero client writes (order creation, stock decrements, and total calculations happen strictly via API)
+    // Authenticated clients can only read their own orders; staff can inspect for fulfillment
+    match /orders/{orderId} {
+      allow read: if isStaff() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow write: if false;
+    }
+
+    // 6. User Profiles
+    // Authenticated users can read and write only their own profile
+    // Role privilege escalation is strictly blocked via immutable role checks
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isStaff();
+      
+      allow create: if isOwner(uid) &&
+                       isValidUser(request.resource.data) &&
+                       (request.resource.data.role == 'customer' || isAdmin());
+
+      allow update: if (isOwner(uid) &&
+                       isValidUser(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['role', 'createdAt', 'uid', 'email', 'blocked']) &&
+                       request.resource.data.role == resource.data.role) || isAdmin();
+
+      allow delete: if isAdmin();
+
+      // Subcollection: addresses
+      match /addresses/{addressId} {
+        allow read: if isOwner(uid) || isStaff();
+        allow create: if isOwner(uid) && isValidAddress(request.resource.data);
+        allow update: if isOwner(uid) && isValidAddress(request.resource.data);
+        allow delete: if isOwner(uid) || isAdmin();
+      }
+    }
+
+    // 7. Carts
+    // Authenticated user can read and write only their own cart
+    match /carts/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidCart(request.resource.data);
+      allow update: if isOwner(uid) && isValidCart(request.resource.data);
+      allow delete: if isOwner(uid);
+    }
+
+    // 8. Wishlists
+    // Authenticated user can read and write only their own wishlist
+    match /wishlists/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidWishlist(request.resource.data);
+      allow update: if isOwner(uid) && isValidWishlist(request.resource.data);
+      allow delete: if isOwner(uid);
+    }
+
+    // 9. Reviews
+    // Public read for approved reviews; authenticated users can submit reviews with status in ['pending', 'approved']
+    // Moderation (update/delete) reserved for staff
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'approved' ||
+                     (isAuthenticated() && resource.data.userId == request.auth.uid) ||
+                     isStaff();
+
+      allow create: if isAuthenticated() && isValidReviewCreate(request.resource.data);
+      allow update, delete: if isStaff();
+    }
+
+    // 10. Contact Messages
+    // No client reads; public create allowed with strict input validation; staff can manage in admin inbox
+    match /contactMessages/{messageId} {
+      allow read: if isStaff();
+      allow create: if isValidContactMessage(request.resource.data);
+      allow update, delete: if isStaff();
+    }
+
+    // 11. Newsletter Subscriptions
+    // No client reads; public subscribe allowed with email format validation; staff can export/manage
+    match /newsletter/{subscriptionId} {
+      allow read: if isStaff();
+      allow create: if isValidNewsletter(request.resource.data);
+      allow update, delete: if isStaff();
+    }
+
+    // 12. Staff Management
+    match /staff/{uid} {
+      allow read: if isStaff();
+      allow write: if isAdmin();
+    }
+
+    // 13. Site Content (CMS / Marketing Copy)
+    match /siteContent/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /siteContentVersions/{versionId} {
+      allow read, write: if isAdmin();
+    }
+
+    // 14. Audit Logs
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false; // Server backend Admin SDK only
+    }
+
+    // ===============================================================
+    // Root Default Deny
+    // Catch-all rule ensures any unspecified path is completely locked down
+    // ===============================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -30,16 +30,16 @@ export default function ScrollToTop() {
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={scrollToTop}
           aria-label="Scroll to top of page"
-          className="fixed bottom-8 right-8 z-40 w-14 h-14 rounded-full bg-ink/90 backdrop-blur-sm border border-champagne/30 text-ivory flex items-center justify-center hover:bg-ink transition-colors shadow-soft group"
+          className="fixed bottom-8 right-8 z-40 w-14 h-14 rounded-full bg-forest/90 backdrop-blur-sm border border-champagne/30 text-ivory flex items-center justify-center hover:bg-forest transition-colors shadow-soft group"
         >
-          {/* SVG Progress Ring */}
+          {/* SVG Progress Ring per Design.md Section 6.3 */}
           <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 56 56">
             <circle
               cx="28"
               cy="28"
               r="26"
               fill="none"
-              stroke="#E4D9CB"
+              stroke="#DDD8C3"
               strokeWidth="1"
               strokeOpacity="0.25"
             />
@@ -48,15 +48,15 @@ export default function ScrollToTop() {
               cy="28"
               r="26"
               fill="none"
-              stroke="#B8924A"
+              stroke="#B88F45"
               strokeWidth="1.5"
               style={{ pathLength: scrollYProgress }}
             />
           </svg>
-          <ArrowUp className="w-4 h-4 text-ivory group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
+
+          <ArrowUp className="w-5 h-5 text-ivory transition-transform duration-300 group-hover:-translate-y-0.5" strokeWidth={1.5} />
         </motion.button>
       )}
     </AnimatePresence>
   );
 }
-

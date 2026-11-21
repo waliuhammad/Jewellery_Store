@@ -18,7 +18,7 @@ export const FAQS = [
   {
     category: 'orders',
     question: 'Can I track my parcel in real-time?',
-    answer: 'Yes. Once packed, your parcel receives a tracking number with Call Courier, Trax, or Leopard Courier. You can enter your Order ID (e.g. AJ-261108-1042) on our Track Order page at any time to see the live step-by-step progress.',
+    answer: 'Yes. Once packed, your parcel receives a tracking number with Call Courier, Trax, or Leopard Courier. You can enter your Order ID (e.g. MJ-261108-1042) on our Track Order page at any time to see the live step-by-step progress.',
   },
   {
     category: 'payments',
@@ -33,7 +33,7 @@ export const FAQS = [
   {
     category: 'returns',
     question: 'What is your return and exchange policy?',
-    answer: 'We offer an unhurried 7-day hassle-free return and exchange guarantee. If an item arrives damaged, differs from its description, or does not suit your style, reach out to us on WhatsApp or hello@aurellejewels.com. We arrange reverse pickup or exchange shipping immediately.',
+    answer: 'We offer an unhurried 7-day hassle-free return and exchange guarantee. If an item arrives damaged, differs from its description, or does not suit your style, reach out to us on WhatsApp or hello@minhajewellers.com. We arrange reverse pickup or exchange shipping immediately.',
   },
   {
     category: 'care',
