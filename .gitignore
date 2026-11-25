@@ -8,3 +8,9 @@ out
 next-env.d.ts
 *.tsbuildinfo
 .vercel
+
+# Firebase service account keys (secrets)
+*service-account*.json
+*-firebase-adminsdk-*.json
+.firebase/
+firebase-debug.log
