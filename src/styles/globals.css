@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Jewelora palette */
+  --color-ivory: #f6f0e8;
+  --color-champagne: #e9ded1;
+  --color-gold: #d8c1a0;
+  --color-antique: #a98455; /* decorative / large type only (3:1 on ivory) */
+  --color-gold-deep: #7f613a; /* gold for small text (5:1 on ivory) */
+  --color-espresso: #49382f;
+  --color-white: #ffffff;
+  --color-line: #e0d3c2;
+
+  /* Legacy names used across existing pages, mapped onto the palette */
+  --color-background: var(--color-ivory);
+  --color-blush: var(--color-champagne);
+  --color-rose: var(--color-gold-deep);
+  --color-rose-border: var(--color-line);
+  --color-ink: var(--color-espresso);
+  --color-muted: #6b5d53;
+  --color-card: var(--color-white);
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-background text-ink font-body antialiased; font-feature-settings: 'ss01'; }
+  h1, h2, h3 { @apply font-heading font-normal; letter-spacing: -0.01em; }
+  ::selection { background: var(--color-gold); color: var(--color-espresso); }
+  :focus-visible { @apply outline-none ring-2 ring-rose ring-offset-2 ring-offset-background; }
+}
+
+@layer components {
+  /* Type scale */
+  .text-display { @apply font-heading text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[5.25rem]; }
+  .text-h1 { @apply font-heading text-4xl leading-tight md:text-5xl; }
+  .text-h2 { @apply font-heading text-3xl leading-tight md:text-[2.75rem]; }
+  .text-h3 { @apply font-heading text-2xl leading-snug; }
+  .text-lead { @apply text-base leading-relaxed text-muted md:text-lg; }
+
+  /* Small uppercase label above headings */
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.28em] text-gold-deep; }
+
+  /* Italic gold accent word inside a heading */
+  .accent { @apply italic text-antique; }
+
+  /* Underline that draws in from the left on hover */
+  .link-draw {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.5s var(--ease-luxe);
+  }
+  .link-draw:hover, .link-draw:focus-visible, .link-draw[aria-current='page'] { background-size: 100% 1px; }
+
+  .hairline { @apply h-px bg-line; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
